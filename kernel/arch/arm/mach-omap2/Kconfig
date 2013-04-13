@@ -196,6 +196,10 @@ config LGE_LAB3_SPRINT_BOARD
 	---help---
 	        Support for LAB3 Device for SPRINT ( Tunning Value, GPIO, etc )
 
+config CPU_OVERCLOCK
+	bool "Enable Overclock"
+	depends on MACH_LGE_OMAP3
+	default n
 
 config MACH_CM_T35
 	bool "CompuLab CM-T35 module"

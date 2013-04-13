@@ -368,10 +368,26 @@ static struct omap_volt_data omap34xx_vdd1_volt_data[] = {
 };
 
 static struct omap_volt_data omap36xx_vdd1_volt_data[] = {
-	{.volt_nominal = 1000000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF4, .vp_errgain = 0x0C,.abb_type = NOMINAL_OPP}, 
-	{.volt_nominal = 1162500, .sr_oppmargin = 37500, .sr_errminlimit = 0xF9, .vp_errgain = 0x16,.abb_type = NOMINAL_OPP},
-	{.volt_nominal = 1300000, .sr_oppmargin = 37500, .sr_errminlimit = 0xFA, .vp_errgain = 0x23,.abb_type = NOMINAL_OPP},
-	{.volt_nominal = 1350000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP},
+	{.volt_nominal = 840000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF4, .vp_errgain = 0x0C,.abb_type = NOMINAL_OPP}, /* OPP1 */
+	{.volt_nominal = 940000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF4, .vp_errgain = 0x0C,.abb_type = NOMINAL_OPP}, /* OPP2 */
+	{.volt_nominal = 980000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF4, .vp_errgain = 0x0C,.abb_type = NOMINAL_OPP}, /* OPP3 */
+	{.volt_nominal = 1000000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF9, .vp_errgain = 0x16,.abb_type = NOMINAL_OPP}, /* OPP4 */
+	{.volt_nominal = 1050000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF9, .vp_errgain = 0x16,.abb_type = NOMINAL_OPP}, /* OPP5 */
+	{.volt_nominal = 1100000, .sr_oppmargin = 37500, .sr_errminlimit = 0xF9, .vp_errgain = 0x16,.abb_type = NOMINAL_OPP}, /* OPP6 */
+	{.volt_nominal = 1150000, .sr_oppmargin = 37500, .sr_errminlimit = 0xFA, .vp_errgain = 0x23,.abb_type = NOMINAL_OPP}, /* OPP7 */
+	{.volt_nominal = 1200000, .sr_oppmargin = 37500, .sr_errminlimit = 0xFA, .vp_errgain = 0x23,.abb_type = NOMINAL_OPP}, /* OPP8 */
+	{.volt_nominal = 1250000, .sr_oppmargin = 37500, .sr_errminlimit = 0xFA, .vp_errgain = 0x23,.abb_type = NOMINAL_OPP}, /* OPP9 */
+	{.volt_nominal = 1300000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP10 */
+#ifdef CONFIG_CPU_OVERCLOCK
+	{.volt_nominal = 1350000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP11 */
+	{.volt_nominal = 1400000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP12 */
+	{.volt_nominal = 1450000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP13 */
+	{.volt_nominal = 1460000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP14 */
+	{.volt_nominal = 1470000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP15 */
+	{.volt_nominal = 1480000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP16 */
+	{.volt_nominal = 1490000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP17 */
+	{.volt_nominal = 1500000, .sr_oppmargin = 62500, .sr_errminlimit = 0xFA, .vp_errgain = 0x27,.abb_type = FAST_OPP}, /* OPP18 */
+#endif
 };
 
 /* VDD2 */

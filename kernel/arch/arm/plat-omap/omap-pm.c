@@ -636,6 +636,63 @@ void omap_pm_dsp_set_min_opp(u8 opp_id)
 	 * if it is higher than the current OPP clock rate.
 	 *
 	 */
+#ifdef CONFIG_CPU_OVERCLOCK
+	pr_debug("OMAP PM: Requested dfreq/mfreq: %d/%d. didx/midx: %d/%d\n",
+               dsp_freq_table[dsp_req_id].frequency,
+               mpu_freq_table[mpu_req_id].frequency,
+               dsp_req_id, mpu_req_id);
+	
+	if (dsp_req_id > mpu_req_id)
+   {
+		struct cpufreq_policy policy;
+
+		cpufreq_get_policy(&policy, 0);
+
+		while (mpu_freq_table[dsp_req_id].frequency < policy.min && dsp_req_id < ft_count - 1) {
+			dsp_req_id = dsp_req_id + 1;
+		}
+		while (mpu_freq_table[dsp_req_id].frequency > policy.max && dsp_req_id > 0) {
+			dsp_req_id = dsp_req_id - 1;
+		}
+
+		selopp = dsp_req_id;
+	} else {
+		struct cpufreq_policy policy;
+
+		cpufreq_get_policy(&policy, 0);
+
+		while (mpu_freq_table[mpu_req_id].frequency < policy.min && mpu_req_id < ft_count - 1) {
+			mpu_req_id = mpu_req_id + 1;
+		}
+		while (mpu_freq_table[mpu_req_id].frequency > policy.max && mpu_req_id > 0) {
+			mpu_req_id = mpu_req_id - 1;
+		}
+
+		selopp = mpu_req_id;
+	}
+
+	/* Is a change requested? */
+	if (currspeed == dsp_freq_table[selopp].frequency){
+       pr_debug("OMAP PM: No freq change dfreq/mfreq: %d/%d. "
+       	"didx/midx: %d/%d\n",
+       	dsp_freq_table[selopp].frequency,
+       	mpu_freq_table[selopp].frequency,
+       	dsp_req_id, mpu_req_id);
+       return;
+     }
+
+	r = omap_device_set_rate(mpu_dev, mpu_dev,
+				mpu_freq_table[selopp].frequency * 1000);
+	if (r)
+		printk(KERN_ERR "omap_device_set_rate error %d.\n", r);
+	else
+		omap_device_set_rate(iva_dev, iva_dev,
+				dsp_freq_table[selopp].frequency * 1000);
+
+	pr_debug("OMAP PM: Set dfreq/mfreq: %d/%d\n",
+       dsp_freq_table[selopp].frequency,
+       mpu_freq_table[selopp].frequency);
+#else
 	if (dsp_req_id > mpu_req_id)
 		selopp = dsp_req_id;
 	else
@@ -652,6 +709,7 @@ void omap_pm_dsp_set_min_opp(u8 opp_id)
 	else
 		omap_device_set_rate(iva_dev, iva_dev,
 				dsp_freq_table[selopp].frequency * 1000);
+#endif
 }
 
 
@@ -752,6 +810,12 @@ void omap_pm_cpu_set_freq(unsigned long f)
 			break;
 		}
 	}
+
+#ifdef CONFIG_CPU_OVERCLOCK
+    pr_debug("OMAP_PM: CPU set frequency - dsp/mpu: %d/%d\n",
+         dsp_freq_table[mpu_req_id].frequency,
+         mpu_freq_table[mpu_req_id].frequency);
+#endif
 }
 
 unsigned long omap_pm_cpu_get_freq(void)

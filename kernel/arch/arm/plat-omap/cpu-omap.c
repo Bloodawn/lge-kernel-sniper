@@ -206,6 +206,80 @@ static int omap_target(struct cpufreq_policy *policy,
 					l3_freq = 100000000;
 				break;
 			case DS_CPU_OP_INDEX_3:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_4:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_5:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_6:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_7:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_8:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_9:
+#ifdef CONFIG_CPU_OVERCLOCK
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_10:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_11:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_12:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_13:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_14:
+				if(ds_status.flag_post_early_suspend == 0)
+					l3_freq = 200000000;
+				else
+					l3_freq = 100000000;
+				break;
+			case DS_CPU_OP_INDEX_15:
+#endif
 				l3_freq = 100000000;
 				break;
 			default:
@@ -308,17 +382,18 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
 	}
 
 	policy->min = policy->cpuinfo.min_freq;
+#ifdef CONFIG_CPU_OVERCLOCK
+	policy->max = 1000000;
+#else
 	policy->max = policy->cpuinfo.max_freq;
+#endif
 	policy->cur = omap_getspeed(policy->cpu);
 
-	/* FIXME: what's the actual transition time? */
-/* LGE_CHANGE_S <sunggyun.yu@lge.com> 2010-12-01 For fast ondemand freq. change */
-#if 1
-	policy->cpuinfo.transition_latency = 15 * 1000;
-#else
-	policy->cpuinfo.transition_latency = 300 * 1000;
-#endif
-/* LGE_CHANGE_E <sunggyun.yu@lge.com> 2010-12-01 For fast ondemand freq. change */
+
+	/* Program the actual transition time for worstcase */
+	/* TI measurements showed that the actual transition time never goes beyond 10ms on OMAP 3430, 3630 and OMAP 4. 20ms buffer are added to avoid too frequent ondemand timer expiry. */
+	policy->cpuinfo.transition_latency = 30 * 1000;
+
 #ifdef CONFIG_SMP
 	/*
 	 * On OMAP4i, both processors share the same voltage and
