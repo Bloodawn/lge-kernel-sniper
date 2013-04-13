@@ -1,0 +1,2 @@
+cmd_line=`od -A n --strings -j 64 -N 512 boot.img`
+echo $cmd_line

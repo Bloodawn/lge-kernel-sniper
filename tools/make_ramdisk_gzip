@@ -1,0 +1,6 @@
+echo "CLEANING OLD RAMDISK..."
+rm tools/ramdisk.gz
+echo "REPACKING RAMDISK..."
+./tools/mkbootfs ramdisk | gzip > tools/ramdisk.gz
+echo "DONE"
+

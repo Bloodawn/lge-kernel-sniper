@@ -1,0 +1,4 @@
+base_temp=`od -A n -h -j 14 -N 2 boot.img | sed 's/ //g'`
+zeros=0000
+base=0x$base_temp$zeros
+echo $base

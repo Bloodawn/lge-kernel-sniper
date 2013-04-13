@@ -1,0 +1,6 @@
+echo "CLEANING OLD RAMDISK..."
+rm tools/ramdisk.lzma
+echo "REPACKING RAMDISK..."
+./tools/mkbootfs ramdisk | lzma > tools/ramdisk.lzma
+echo "DONE"
+

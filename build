@@ -1,0 +1,45 @@
+#!/bin/bash
+
+######################
+# Scripts by Bloodawn
+######################
+
+while :
+do
+
+  echo "============================"
+  echo " 1) Build main kernel"
+  echo " 2) Build overclock kernel"
+  echo " 3) Clean up"
+  echo
+  echo " 4) Get zImage and modules"
+  echo
+  echo " 5) Pack ramdisk - lzma"
+  echo " 6) Pack boot.img - lzma"
+  echo
+  echo " 7) Pack ramdisk - gzip"
+  echo " 8) Pack boot.img - gzip"
+  echo
+  echo " x) Exit"
+  echo "============================"
+  echo -n "Enter option: " 
+  read opt
+
+  
+  if [ "$?" != "1" ]
+  then
+    case $opt in
+      1) cd kernel; make mrproper; make sniper_main_defconfig; cp CURRENT_VERSION .version; make -j6; cd ..; continue;;
+      2) cd kernel; make mrproper; make sniper_overclock_defconfig; cp CURRENT_VERSION .version; make -j6; cd ..; continue;;
+      3) cd kernel; make mrproper; cd ..; continue;;
+      4) ./tools/get_files; continue;;
+      5) ./tools/make_ramdisk_lzma; continue;;
+      6) ./tools/make_bootimg_lzma; continue;;
+      7) ./tools/make_ramdisk_gzip; continue;;
+      8) ./tools/make_bootimg_gzip; continue;;
+      x) exit 1;;
+      *) echo "Invalid option"; continue;;
+    esac
+  fi
+
+done

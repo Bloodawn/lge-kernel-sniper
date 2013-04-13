@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if test -e tools/zImage
+then
+echo "CLEANING OLD BOOTIMG..."
+rm done/boot.img
+echo "PACKING BOOTIMG..."
+    ./tools/mkbootimg --kernel tools/zImage --ramdisk tools/ramdisk.lzma -o done/boot.img --base 0x80000000
+echo "DONE"
+else
+    echo "No zImage found"
+fi
+
