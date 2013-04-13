@@ -1048,6 +1048,7 @@ unsigned long perf_requirement_fra_fp12)
 	/* If perf_requirement_int_ulong > 0,
 		 which means that the required performance is greater than 1,
 		 apply the maximum CPU_OP. */
+#ifdef CONFIG_CPU_OVERCLOCK
 	if(perf_requirement_int_ulong > 0){
 		return(DS_CPU_OP_INDEX_0);
 	}
@@ -1056,19 +1057,19 @@ unsigned long perf_requirement_fra_fp12)
 			case 0xf00: return(DS_CPU_OP_INDEX_0);	/* > 0.9375 and < 1 */
 			case 0xe00: return(DS_CPU_OP_INDEX_0);	/* > 0.875 and < 0.9375 */
 			case 0xd00: return(DS_CPU_OP_INDEX_0);	/* > 0.8125 and < 0.875 */
-			case 0xc00: return(DS_CPU_OP_INDEX_1);	/* > 0.75 and < 0.8125 */
-			case 0xb00: return(DS_CPU_OP_INDEX_1);	/* > 0.6875 and < 0.75 */
-			case 0xa00: return(DS_CPU_OP_INDEX_1);	/* > 0.625 and < 0.6875 */
-			case 0x900: return(DS_CPU_OP_INDEX_2);	/* > 0.5625 and < 0.625 */
-			case 0x800: return(DS_CPU_OP_INDEX_2);	/* > 0.5 and < 0.5625 */
-			case 0x700: return(DS_CPU_OP_INDEX_2);	/* > 0.4375 and < 0.5 */
-			case 0x600: return(DS_CPU_OP_INDEX_2);	/* > 0.375 and < 0.4375 */
-			case 0x500: return(DS_CPU_OP_INDEX_2);	/* > 0.3125 and < 0.375 */
-			case 0x400: return(DS_CPU_OP_INDEX_3);	/* > 0.25 and < 0.3125 */
-			case 0x300: return(DS_CPU_OP_INDEX_3);	/* > 0.1875 and < 0.25 */
-			case 0x200: return(DS_CPU_OP_INDEX_3);	/* > 0.125 and < 0.1875 */
-			case 0x100: return(DS_CPU_OP_INDEX_3);	/* > 0.0625 and < 0.125 */
-			default: return(DS_CPU_OP_INDEX_3);	/* < 0.0625 */
+			case 0xc00: return(DS_CPU_OP_INDEX_6);	/* > 0.75 and < 0.8125 */
+			case 0xb00: return(DS_CPU_OP_INDEX_6);	/* > 0.6875 and < 0.75 */
+			case 0xa00: return(DS_CPU_OP_INDEX_6);	/* > 0.625 and < 0.6875 */
+			case 0x900: return(DS_CPU_OP_INDEX_10);	/* > 0.5625 and < 0.625 */
+			case 0x800: return(DS_CPU_OP_INDEX_10);	/* > 0.5 and < 0.5625 */
+			case 0x700: return(DS_CPU_OP_INDEX_10);	/* > 0.4375 and < 0.5 */
+			case 0x600: return(DS_CPU_OP_INDEX_10);	/* > 0.375 and < 0.4375 */
+			case 0x500: return(DS_CPU_OP_INDEX_10);	/* > 0.3125 and < 0.375 */
+			case 0x400: return(DS_CPU_OP_INDEX_15);	/* > 0.25 and < 0.3125 */
+			case 0x300: return(DS_CPU_OP_INDEX_15);	/* > 0.1875 and < 0.25 */
+			case 0x200: return(DS_CPU_OP_INDEX_15);	/* > 0.125 and < 0.1875 */
+			case 0x100: return(DS_CPU_OP_INDEX_15);	/* > 0.0625 and < 0.125 */
+			default: return(DS_CPU_OP_INDEX_15);	/* < 0.0625 */
 		}
 	}
 	else{
@@ -1076,19 +1077,19 @@ unsigned long perf_requirement_fra_fp12)
 			case 0xf00: return(DS_CPU_OP_INDEX_0);	/* == 0.9375 */
 			case 0xe00: return(DS_CPU_OP_INDEX_0);	/* == 0.875 */
 			case 0xd00: return(DS_CPU_OP_INDEX_0);	/* == 0.8125 */
-			case 0xc00: return(DS_CPU_OP_INDEX_1);	/* == 0.75 */
-			case 0xb00: return(DS_CPU_OP_INDEX_1);	/* == 0.6875 */
-			case 0xa00: return(DS_CPU_OP_INDEX_1);	/* == 0.625 */
-			case 0x900: return(DS_CPU_OP_INDEX_2);	/* == 0.5625 */
-			case 0x800: return(DS_CPU_OP_INDEX_2);	/* == 0.5 */
-			case 0x700: return(DS_CPU_OP_INDEX_2);	/* == 0.4375 */
-			case 0x600: return(DS_CPU_OP_INDEX_2);	/* == 0.375 */
-			case 0x500: return(DS_CPU_OP_INDEX_2);	/* == 0.3125 */
-			case 0x400: return(DS_CPU_OP_INDEX_3);	/* == 0.25 */
-			case 0x300: return(DS_CPU_OP_INDEX_3);	/* == 0.1875 */
-			case 0x200: return(DS_CPU_OP_INDEX_3);	/* == 0.125 */
-			case 0x100: return(DS_CPU_OP_INDEX_3);	/* == 0.0625 */
-			default: return(DS_CPU_OP_INDEX_3);	/* <= 0.0625 */
+			case 0xc00: return(DS_CPU_OP_INDEX_6);	/* == 0.75 */
+			case 0xb00: return(DS_CPU_OP_INDEX_6);	/* == 0.6875 */
+			case 0xa00: return(DS_CPU_OP_INDEX_6);	/* == 0.625 */
+			case 0x900: return(DS_CPU_OP_INDEX_10);	/* == 0.5625 */
+			case 0x800: return(DS_CPU_OP_INDEX_10);	/* == 0.5 */
+			case 0x700: return(DS_CPU_OP_INDEX_10);	/* == 0.4375 */
+			case 0x600: return(DS_CPU_OP_INDEX_10);	/* == 0.375 */
+			case 0x500: return(DS_CPU_OP_INDEX_10);	/* == 0.3125 */
+			case 0x400: return(DS_CPU_OP_INDEX_15);	/* == 0.25 */
+			case 0x300: return(DS_CPU_OP_INDEX_15);	/* == 0.1875 */
+			case 0x200: return(DS_CPU_OP_INDEX_15);	/* == 0.125 */
+			case 0x100: return(DS_CPU_OP_INDEX_15);	/* == 0.0625 */
+			default: return(DS_CPU_OP_INDEX_15);	/* <= 0.0625 */
 		}
 	}
 }
@@ -1110,42 +1111,42 @@ unsigned long perf_requirement_fra_fp12)
 	}
 	else if((perf_requirement_fra_fp12 & 0xff) != 0){
 		switch(perf_requirement_fra_fp12 & 0xf00){
-			case 0xf00: return(DS_CPU_OP_INDEX_1);	/* > 0.9375 and < 1 */
-			case 0xe00: return(DS_CPU_OP_INDEX_1);	/* > 0.875 and < 0.9375 */
-			case 0xd00: return(DS_CPU_OP_INDEX_1);	/* > 0.8125 and < 0.875 */
-			case 0xc00: return(DS_CPU_OP_INDEX_2);	/* > 0.75 and < 0.8125 */
-			case 0xb00: return(DS_CPU_OP_INDEX_2);	/* > 0.6875 and < 0.75 */
-			case 0xa00: return(DS_CPU_OP_INDEX_2);	/* > 0.625 and < 0.6875 */
-			case 0x900: return(DS_CPU_OP_INDEX_3);	/* > 0.5625 and < 0.625 */
-			case 0x800: return(DS_CPU_OP_INDEX_3);	/* > 0.5 and < 0.5625 */
-			case 0x700: return(DS_CPU_OP_INDEX_3);	/* > 0.4375 and < 0.5 */
-			case 0x600: return(DS_CPU_OP_INDEX_3);	/* > 0.375 and < 0.4375 */
-			case 0x500: return(DS_CPU_OP_INDEX_3);	/* > 0.3125 and < 0.375 */
-			case 0x400: return(DS_CPU_OP_INDEX_3);	/* > 0.25 and < 0.3125 */
-			case 0x300: return(DS_CPU_OP_INDEX_3);	/* > 0.1875 and < 0.25 */
-			case 0x200: return(DS_CPU_OP_INDEX_3);	/* > 0.125 and < 0.1875 */
-			case 0x100: return(DS_CPU_OP_INDEX_3);	/* > 0.0625 and < 0.125 */
-			default: return(DS_CPU_OP_INDEX_3);	/* < 0.0625 */
+			case 0xf00: return(DS_CPU_OP_INDEX_6);	/* > 0.9375 and < 1 */
+			case 0xe00: return(DS_CPU_OP_INDEX_6);	/* > 0.875 and < 0.9375 */
+			case 0xd00: return(DS_CPU_OP_INDEX_6);	/* > 0.8125 and < 0.875 */
+			case 0xc00: return(DS_CPU_OP_INDEX_10);	/* > 0.75 and < 0.8125 */
+			case 0xb00: return(DS_CPU_OP_INDEX_10);	/* > 0.6875 and < 0.75 */
+			case 0xa00: return(DS_CPU_OP_INDEX_10);	/* > 0.625 and < 0.6875 */
+			case 0x900: return(DS_CPU_OP_INDEX_15);	/* > 0.5625 and < 0.625 */
+			case 0x800: return(DS_CPU_OP_INDEX_15);	/* > 0.5 and < 0.5625 */
+			case 0x700: return(DS_CPU_OP_INDEX_15);	/* > 0.4375 and < 0.5 */
+			case 0x600: return(DS_CPU_OP_INDEX_15);	/* > 0.375 and < 0.4375 */
+			case 0x500: return(DS_CPU_OP_INDEX_15);	/* > 0.3125 and < 0.375 */
+			case 0x400: return(DS_CPU_OP_INDEX_15);	/* > 0.25 and < 0.3125 */
+			case 0x300: return(DS_CPU_OP_INDEX_15);	/* > 0.1875 and < 0.25 */
+			case 0x200: return(DS_CPU_OP_INDEX_15);	/* > 0.125 and < 0.1875 */
+			case 0x100: return(DS_CPU_OP_INDEX_15);	/* > 0.0625 and < 0.125 */
+			default: return(DS_CPU_OP_INDEX_15);	/* < 0.0625 */
 		}
 	}
 	else{
 		switch(perf_requirement_fra_fp12){
-			case 0xf00: return(DS_CPU_OP_INDEX_1);	/* == 0.9375 */
-			case 0xe00: return(DS_CPU_OP_INDEX_1);	/* == 0.875 */
-			case 0xd00: return(DS_CPU_OP_INDEX_1);	/* == 0.8125 */
-			case 0xc00: return(DS_CPU_OP_INDEX_2);	/* == 0.75 */
-			case 0xb00: return(DS_CPU_OP_INDEX_2);	/* == 0.6875 */
-			case 0xa00: return(DS_CPU_OP_INDEX_2);	/* == 0.625 */
-			case 0x900: return(DS_CPU_OP_INDEX_3);	/* == 0.5625 */
-			case 0x800: return(DS_CPU_OP_INDEX_3);	/* == 0.5 */
-			case 0x700: return(DS_CPU_OP_INDEX_3);	/* == 0.4375 */
-			case 0x600: return(DS_CPU_OP_INDEX_3);	/* == 0.375 */
-			case 0x500: return(DS_CPU_OP_INDEX_3);	/* == 0.3125 */
-			case 0x400: return(DS_CPU_OP_INDEX_3);	/* == 0.25 */
-			case 0x300: return(DS_CPU_OP_INDEX_3);	/* == 0.1875 */
-			case 0x200: return(DS_CPU_OP_INDEX_3);	/* == 0.125 */
-			case 0x100: return(DS_CPU_OP_INDEX_3);	/* == 0.0625 */
-			default: return(DS_CPU_OP_INDEX_3);	/* <= 0.0625 */
+			case 0xf00: return(DS_CPU_OP_INDEX_6);	/* == 0.9375 */
+			case 0xe00: return(DS_CPU_OP_INDEX_6);	/* == 0.875 */
+			case 0xd00: return(DS_CPU_OP_INDEX_6);	/* == 0.8125 */
+			case 0xc00: return(DS_CPU_OP_INDEX_10);	/* == 0.75 */
+			case 0xb00: return(DS_CPU_OP_INDEX_10);	/* == 0.6875 */
+			case 0xa00: return(DS_CPU_OP_INDEX_10);	/* == 0.625 */
+			case 0x900: return(DS_CPU_OP_INDEX_15);	/* == 0.5625 */
+			case 0x800: return(DS_CPU_OP_INDEX_15);	/* == 0.5 */
+			case 0x700: return(DS_CPU_OP_INDEX_15);	/* == 0.4375 */
+			case 0x600: return(DS_CPU_OP_INDEX_15);	/* == 0.375 */
+			case 0x500: return(DS_CPU_OP_INDEX_15);	/* == 0.3125 */
+			case 0x400: return(DS_CPU_OP_INDEX_15);	/* == 0.25 */
+			case 0x300: return(DS_CPU_OP_INDEX_15);	/* == 0.1875 */
+			case 0x200: return(DS_CPU_OP_INDEX_15);	/* == 0.125 */
+			case 0x100: return(DS_CPU_OP_INDEX_15);	/* == 0.0625 */
+			default: return(DS_CPU_OP_INDEX_15);	/* <= 0.0625 */
 		}
 	}
 }
@@ -1213,21 +1214,275 @@ int ds_update_time_counter(void){
 		lc_usec_interval_fse_fra_fp12 = 0x0;
 		break;
 	case DS_CPU_OP_INDEX_1:
-		ds_fpmul(lc_usec_interval, 0, 0, 0xccc, 
+		ds_fpmul(lc_usec_interval, 0, 0, 0x96c, 
 			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
 		break;
 	case DS_CPU_OP_INDEX_2:
-		ds_fpmul(lc_usec_interval, 0, 0, 0x999, 
+		ds_fpmul(lc_usec_interval, 0, 0, 0x95b, 
 			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
 		break;
 	case DS_CPU_OP_INDEX_3:
-		ds_fpmul(lc_usec_interval, 0, 0, 0x4cc, 
+		ds_fpmul(lc_usec_interval, 0, 0, 0x94a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_4:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x93c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_5:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x92b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_6:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x91a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_7:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x90c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_8:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x80b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_9:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x70a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_10:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x60c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_11:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x50b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_12:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x40a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_13:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x30c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_14:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x20b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_15:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x10a, 
 			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
 	default:
 		lc_usec_interval_fse = lc_usec_interval;
 		lc_usec_interval_fse_fra_fp12 = 0x0;
 		break;
 	}
+#else
+	if(perf_requirement_int_ulong > 0){
+		return(DS_CPU_OP_INDEX_0);
+	}
+	else if((perf_requirement_fra_fp12 & 0xff) != 0){
+		switch(perf_requirement_fra_fp12 & 0xf00){
+			case 0xf00: return(DS_CPU_OP_INDEX_0);	/* > 0.9375 and < 1 */
+			case 0xe00: return(DS_CPU_OP_INDEX_0);	/* > 0.875 and < 0.9375 */
+			case 0xd00: return(DS_CPU_OP_INDEX_0);	/* > 0.8125 and < 0.875 */
+			case 0xc00: return(DS_CPU_OP_INDEX_3);	/* > 0.75 and < 0.8125 */
+			case 0xb00: return(DS_CPU_OP_INDEX_3);	/* > 0.6875 and < 0.75 */
+			case 0xa00: return(DS_CPU_OP_INDEX_3);	/* > 0.625 and < 0.6875 */
+			case 0x900: return(DS_CPU_OP_INDEX_6);	/* > 0.5625 and < 0.625 */
+			case 0x800: return(DS_CPU_OP_INDEX_6);	/* > 0.5 and < 0.5625 */
+			case 0x700: return(DS_CPU_OP_INDEX_6);	/* > 0.4375 and < 0.5 */
+			case 0x600: return(DS_CPU_OP_INDEX_6);	/* > 0.375 and < 0.4375 */
+			case 0x500: return(DS_CPU_OP_INDEX_6);	/* > 0.3125 and < 0.375 */
+			case 0x400: return(DS_CPU_OP_INDEX_9);	/* > 0.25 and < 0.3125 */
+			case 0x300: return(DS_CPU_OP_INDEX_9);	/* > 0.1875 and < 0.25 */
+			case 0x200: return(DS_CPU_OP_INDEX_9);	/* > 0.125 and < 0.1875 */
+			case 0x100: return(DS_CPU_OP_INDEX_9);	/* > 0.0625 and < 0.125 */
+			default: return(DS_CPU_OP_INDEX_9);	/* < 0.0625 */
+		}
+	}
+	else{
+		switch(perf_requirement_fra_fp12){
+			case 0xf00: return(DS_CPU_OP_INDEX_0);	/* == 0.9375 */
+			case 0xe00: return(DS_CPU_OP_INDEX_0);	/* == 0.875 */
+			case 0xd00: return(DS_CPU_OP_INDEX_0);	/* == 0.8125 */
+			case 0xc00: return(DS_CPU_OP_INDEX_3);	/* == 0.75 */
+			case 0xb00: return(DS_CPU_OP_INDEX_3);	/* == 0.6875 */
+			case 0xa00: return(DS_CPU_OP_INDEX_3);	/* == 0.625 */
+			case 0x900: return(DS_CPU_OP_INDEX_6);	/* == 0.5625 */
+			case 0x800: return(DS_CPU_OP_INDEX_6);	/* == 0.5 */
+			case 0x700: return(DS_CPU_OP_INDEX_6);	/* == 0.4375 */
+			case 0x600: return(DS_CPU_OP_INDEX_6);	/* == 0.375 */
+			case 0x500: return(DS_CPU_OP_INDEX_6);	/* == 0.3125 */
+			case 0x400: return(DS_CPU_OP_INDEX_9);	/* == 0.25 */
+			case 0x300: return(DS_CPU_OP_INDEX_9);	/* == 0.1875 */
+			case 0x200: return(DS_CPU_OP_INDEX_9);	/* == 0.125 */
+			case 0x100: return(DS_CPU_OP_INDEX_9);	/* == 0.0625 */
+			default: return(DS_CPU_OP_INDEX_9);	/* <= 0.0625 */
+		}
+	}
+}
+
+/*====================================================================
+	The function which finds and returns the next low CPU_OP index.
+	====================================================================*/
+
+unsigned int ds_get_next_low_cpu_op_index(
+unsigned long perf_requirement_int_ulong,
+unsigned long perf_requirement_fra_fp12)
+{
+
+	/* If perf_requirement_int_ulong > 0,
+		 which means that the required performance is greater than 1,
+		 apply the maximum CPU_OP. */
+	if(perf_requirement_int_ulong > 0){
+		return(DS_CPU_OP_INDEX_0);
+	}
+	else if((perf_requirement_fra_fp12 & 0xff) != 0){
+		switch(perf_requirement_fra_fp12 & 0xf00){
+			case 0xf00: return(DS_CPU_OP_INDEX_3);	/* > 0.9375 and < 1 */
+			case 0xe00: return(DS_CPU_OP_INDEX_3);	/* > 0.875 and < 0.9375 */
+			case 0xd00: return(DS_CPU_OP_INDEX_3);	/* > 0.8125 and < 0.875 */
+			case 0xc00: return(DS_CPU_OP_INDEX_6);	/* > 0.75 and < 0.8125 */
+			case 0xb00: return(DS_CPU_OP_INDEX_6);	/* > 0.6875 and < 0.75 */
+			case 0xa00: return(DS_CPU_OP_INDEX_6);	/* > 0.625 and < 0.6875 */
+			case 0x900: return(DS_CPU_OP_INDEX_9);	/* > 0.5625 and < 0.625 */
+			case 0x800: return(DS_CPU_OP_INDEX_9);	/* > 0.5 and < 0.5625 */
+			case 0x700: return(DS_CPU_OP_INDEX_9);	/* > 0.4375 and < 0.5 */
+			case 0x600: return(DS_CPU_OP_INDEX_9);	/* > 0.375 and < 0.4375 */
+			case 0x500: return(DS_CPU_OP_INDEX_9);	/* > 0.3125 and < 0.375 */
+			case 0x400: return(DS_CPU_OP_INDEX_9);	/* > 0.25 and < 0.3125 */
+			case 0x300: return(DS_CPU_OP_INDEX_9);	/* > 0.1875 and < 0.25 */
+			case 0x200: return(DS_CPU_OP_INDEX_9);	/* > 0.125 and < 0.1875 */
+			case 0x100: return(DS_CPU_OP_INDEX_9);	/* > 0.0625 and < 0.125 */
+			default: return(DS_CPU_OP_INDEX_9);	/* < 0.0625 */
+		}
+	}
+	else{
+		switch(perf_requirement_fra_fp12){
+			case 0xf00: return(DS_CPU_OP_INDEX_3);	/* == 0.9375 */
+			case 0xe00: return(DS_CPU_OP_INDEX_3);	/* == 0.875 */
+			case 0xd00: return(DS_CPU_OP_INDEX_3);	/* == 0.8125 */
+			case 0xc00: return(DS_CPU_OP_INDEX_6);	/* == 0.75 */
+			case 0xb00: return(DS_CPU_OP_INDEX_6);	/* == 0.6875 */
+			case 0xa00: return(DS_CPU_OP_INDEX_6);	/* == 0.625 */
+			case 0x900: return(DS_CPU_OP_INDEX_9);	/* == 0.5625 */
+			case 0x800: return(DS_CPU_OP_INDEX_9);	/* == 0.5 */
+			case 0x700: return(DS_CPU_OP_INDEX_9);	/* == 0.4375 */
+			case 0x600: return(DS_CPU_OP_INDEX_9);	/* == 0.375 */
+			case 0x500: return(DS_CPU_OP_INDEX_9);	/* == 0.3125 */
+			case 0x400: return(DS_CPU_OP_INDEX_9);	/* == 0.25 */
+			case 0x300: return(DS_CPU_OP_INDEX_9);	/* == 0.1875 */
+			case 0x200: return(DS_CPU_OP_INDEX_9);	/* == 0.125 */
+			case 0x100: return(DS_CPU_OP_INDEX_9);	/* == 0.0625 */
+			default: return(DS_CPU_OP_INDEX_9);	/* <= 0.0625 */
+		}
+	}
+}
+
+/*====================================================================
+	The function which updates the fractions of
+	busy (= task + schedule + dvs suite) and idle time at each CPU_OP.
+	====================================================================*/
+
+int ds_update_time_counter(void){
+
+	unsigned long lc_sec_interval = 0;
+	unsigned long lc_usec_interval = 0;
+	unsigned long lc_usec_interval_fse = 0;
+	unsigned long lc_usec_interval_fse_fra_fp12 = 0;
+
+	/* (1) No rdtsc support in ARM.
+			So, we instead use ds_status.cpu_op_index for the last time interval
+			to calculate the full speed equivalent elapsed time.
+			I.e., the fse elapsed time = 
+			elapsed time (measured by do_gettimeofday) * scaling factor
+	 */
+
+	do_gettimeofday(&ds_timeval);
+	ds_status.tv_sec_curr = ds_timeval.tv_sec;
+	ds_status.tv_usec_curr = ds_timeval.tv_usec;
+
+	if(ds_status.flag_time_base_initialized == 0){
+		lc_usec_interval = 0;
+		ds_status.flag_time_base_initialized = 1;
+	}
+	else{
+		if(ds_status.tv_sec_curr == ds_status.tv_sec_base){
+			if(ds_status.tv_usec_curr >= ds_status.tv_usec_base){
+				lc_usec_interval = ds_status.tv_usec_curr - ds_status.tv_usec_base;
+			}
+			else{
+				/* Time inversion. 
+					This happens due to the inaccuracy in do_gettimeofday() function
+					when it is called consecutively in a very short time inverval.
+					In this case, we apply 1msec, which is the minimum context switch interval, 
+					as default.
+				 */
+				lc_usec_interval = 1000;
+			}
+		}
+		else{
+			/* ds_status.tv_usec_curr should be ds_status.tv_usec_base + 1.
+				This is because of that, 
+				no matter how long the interval between two consecutive 
+				ds_update_time_counter() calls is, it never ever able to 
+				exceed 1 sec in Linux kernel since the function is called
+				4 times at every context swtiching.
+			 */
+			lc_usec_interval = ds_status.tv_usec_curr + 1000000 - ds_status.tv_usec_base;
+		}
+
+	}
+	ds_status.tv_sec_base = ds_status.tv_sec_curr;
+	ds_status.tv_usec_base = ds_status.tv_usec_curr;
+
+	switch(ds_status.cpu_op_index){
+		case DS_CPU_OP_INDEX_0:
+		lc_usec_interval_fse = lc_usec_interval;
+		lc_usec_interval_fse_fra_fp12 = 0x0;
+		break;
+	case DS_CPU_OP_INDEX_1:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x90c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_2:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x80b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_3:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x70a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_4:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x60c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_5:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x50b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_6:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x40a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_7:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x30c, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_8:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x20b, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+		break;
+	case DS_CPU_OP_INDEX_9:
+		ds_fpmul(lc_usec_interval, 0, 0, 0x10a, 
+			 &lc_usec_interval_fse, &lc_usec_interval_fse_fra_fp12);
+	default:
+		lc_usec_interval_fse = lc_usec_interval;
+		lc_usec_interval_fse_fra_fp12 = 0x0;
+		break;
+	}
+#endif
 
 	/* (2) Update ds_counter by using lc_usec_interval, lc_usec_interval_fse,
 				 lc_usec_interval_fse_fra_fp12, ds_status.cpu_op_index,
@@ -1460,6 +1715,20 @@ int ds_do_dvs_aidvs(unsigned int *target_cpu_op_index,
 			case DS_CPU_OP_INDEX_1: stat->cpu_op_index = DS_CPU_OP_INDEX_0; break;
 			case DS_CPU_OP_INDEX_2: stat->cpu_op_index = DS_CPU_OP_INDEX_1; break;
 			case DS_CPU_OP_INDEX_3: stat->cpu_op_index = DS_CPU_OP_INDEX_2; break;
+			case DS_CPU_OP_INDEX_4: stat->cpu_op_index = DS_CPU_OP_INDEX_3; break;
+			case DS_CPU_OP_INDEX_5: stat->cpu_op_index = DS_CPU_OP_INDEX_4; break;
+			case DS_CPU_OP_INDEX_6: stat->cpu_op_index = DS_CPU_OP_INDEX_5; break;
+			case DS_CPU_OP_INDEX_7: stat->cpu_op_index = DS_CPU_OP_INDEX_6; break;
+			case DS_CPU_OP_INDEX_8: stat->cpu_op_index = DS_CPU_OP_INDEX_7; break;
+			case DS_CPU_OP_INDEX_9: stat->cpu_op_index = DS_CPU_OP_INDEX_8; break;
+#ifdef CONFIG_CPU_OVERCLOCK
+			case DS_CPU_OP_INDEX_10: stat->cpu_op_index = DS_CPU_OP_INDEX_9; break;
+			case DS_CPU_OP_INDEX_11: stat->cpu_op_index = DS_CPU_OP_INDEX_10; break;
+			case DS_CPU_OP_INDEX_12: stat->cpu_op_index = DS_CPU_OP_INDEX_11; break;
+			case DS_CPU_OP_INDEX_13: stat->cpu_op_index = DS_CPU_OP_INDEX_12; break;
+			case DS_CPU_OP_INDEX_14: stat->cpu_op_index = DS_CPU_OP_INDEX_13; break;
+			case DS_CPU_OP_INDEX_15: stat->cpu_op_index = DS_CPU_OP_INDEX_14; break;
+#endif
 			default: stat->cpu_op_index = DS_CPU_OP_INDEX_0; break;
 		}
 
@@ -1719,6 +1988,20 @@ int ds_do_dvs_aidvs(unsigned int *target_cpu_op_index,
 			case DS_CPU_OP_INDEX_1: stat->cpu_op_index = DS_CPU_OP_INDEX_0; break;
 			case DS_CPU_OP_INDEX_2: stat->cpu_op_index = DS_CPU_OP_INDEX_1; break;
 			case DS_CPU_OP_INDEX_3: stat->cpu_op_index = DS_CPU_OP_INDEX_2; break;
+			case DS_CPU_OP_INDEX_4: stat->cpu_op_index = DS_CPU_OP_INDEX_3; break;
+			case DS_CPU_OP_INDEX_5: stat->cpu_op_index = DS_CPU_OP_INDEX_4; break;
+			case DS_CPU_OP_INDEX_6: stat->cpu_op_index = DS_CPU_OP_INDEX_5; break;
+			case DS_CPU_OP_INDEX_7: stat->cpu_op_index = DS_CPU_OP_INDEX_6; break;
+			case DS_CPU_OP_INDEX_8: stat->cpu_op_index = DS_CPU_OP_INDEX_7; break;
+			case DS_CPU_OP_INDEX_9: stat->cpu_op_index = DS_CPU_OP_INDEX_8; break;
+#ifdef CONFIG_CPU_OVERCLOCK
+			case DS_CPU_OP_INDEX_10: stat->cpu_op_index = DS_CPU_OP_INDEX_9; break;
+			case DS_CPU_OP_INDEX_11: stat->cpu_op_index = DS_CPU_OP_INDEX_10; break;
+			case DS_CPU_OP_INDEX_12: stat->cpu_op_index = DS_CPU_OP_INDEX_11; break;
+			case DS_CPU_OP_INDEX_13: stat->cpu_op_index = DS_CPU_OP_INDEX_12; break;
+			case DS_CPU_OP_INDEX_14: stat->cpu_op_index = DS_CPU_OP_INDEX_13; break;
+			case DS_CPU_OP_INDEX_15: stat->cpu_op_index = DS_CPU_OP_INDEX_14; break;
+#endif
 			default: stat->cpu_op_index = DS_CPU_OP_INDEX_0; break;
 		}
 
@@ -3993,7 +4276,264 @@ update_cpu_op:
 
 		switch(ds_status.target_cpu_op_index){
 			case DS_CPU_OP_INDEX_0:
-				omap_pm_cpu_set_freq(1000000000);	// VDD1_OPP4	1GHz
+#ifdef CONFIG_CPU_OVERCLOCK
+				omap_pm_cpu_set_freq(1360000000);	// VDD1_OPP16	1340MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1360000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_1:
+				omap_pm_cpu_set_freq(1340000000);	// VDD1_OPP15	1340MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1340000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_2:
+				omap_pm_cpu_set_freq(1320000000);	// VDD1_OPP14	1320MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1320000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_3:
+				omap_pm_cpu_set_freq(1300000000);	// VDD1_OPP13	1.3GHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1300000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_4:
+				omap_pm_cpu_set_freq(1200000000);	// VDD1_OPP12	1.2GHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1200000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_5:
+				omap_pm_cpu_set_freq(1100000000);	// VDD1_OPP11	1.1GHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1100000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_6:
+				omap_pm_cpu_set_freq(1000000000);	// VDD1_OPP10	1GHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 1000000000);
+				omap_device_set_rate(iva_dev, iva_dev, 800000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_7:
+				omap_pm_cpu_set_freq(900000000);	// VDD1_OPP9	900MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 900000000);
+				omap_device_set_rate(iva_dev, iva_dev, 700000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_8:
+				omap_pm_cpu_set_freq(800000000);	// VDD1_OPP8	800MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 800000000);
+				omap_device_set_rate(iva_dev, iva_dev, 660000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_9:
+				omap_pm_cpu_set_freq(700000000);	// VDD1_OPP7	700MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 700000000);
+				omap_device_set_rate(iva_dev, iva_dev, 600000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_10:
+				omap_pm_cpu_set_freq(600000000);	// VDD1_OPP6	600MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 600000000);
+				omap_device_set_rate(iva_dev, iva_dev, 520000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_11:
+				omap_pm_cpu_set_freq(500000000);	// VDD1_OPP5	500MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 500000000);
+				omap_device_set_rate(iva_dev, iva_dev, 400000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_12:
+				omap_pm_cpu_set_freq(400000000);	// VDD1_OPP4	400MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 400000000);
+				omap_device_set_rate(iva_dev, iva_dev, 300000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_13:
+				omap_pm_cpu_set_freq(300000000);	// VDD1_OPP3	300MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 300000000);
+				omap_device_set_rate(iva_dev, iva_dev, 260000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_14:
+				omap_pm_cpu_set_freq(220000000);	// VDD1_OPP2	220MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 220000000);
+				omap_device_set_rate(iva_dev, iva_dev, 260000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_15:
+#else
+				omap_pm_cpu_set_freq(1000000000);	// VDD1_OPP10	1GHz
 				omap_device_set_rate(mpu_dev, mpu_dev, 1000000000);
 				omap_device_set_rate(iva_dev, iva_dev, 800000000);
 				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
@@ -4010,7 +4550,24 @@ update_cpu_op:
 
 				break;
 			case DS_CPU_OP_INDEX_1:
-				omap_pm_cpu_set_freq(800000000);	// VDD1_OPP3	800MHz
+				omap_pm_cpu_set_freq(900000000);	// VDD1_OPP9	900MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 900000000);
+				omap_device_set_rate(iva_dev, iva_dev, 700000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_2:
+				omap_pm_cpu_set_freq(800000000);	// VDD1_OPP8	800MHz
 				omap_device_set_rate(mpu_dev, mpu_dev, 800000000);
 				omap_device_set_rate(iva_dev, iva_dev, 660000000);
 				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
@@ -4026,8 +4583,25 @@ update_cpu_op:
 				}
 
 				break;
-			case DS_CPU_OP_INDEX_2:
-				omap_pm_cpu_set_freq(600000000);	// VDD1_OPP2	600MHz
+			case DS_CPU_OP_INDEX_3:
+				omap_pm_cpu_set_freq(700000000);	// VDD1_OPP7	700MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 700000000);
+				omap_device_set_rate(iva_dev, iva_dev, 600000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_4:
+				omap_pm_cpu_set_freq(600000000);	// VDD1_OPP6	600MHz
 				omap_device_set_rate(mpu_dev, mpu_dev, 600000000);
 				omap_device_set_rate(iva_dev, iva_dev, 520000000);
 				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
@@ -4043,10 +4617,79 @@ update_cpu_op:
 				}
 
 				break;
-			case DS_CPU_OP_INDEX_3:
-			default:
-				omap_pm_cpu_set_freq(300000000);	// VDD1_OPP1	300MHz
+			case DS_CPU_OP_INDEX_5:
+				omap_pm_cpu_set_freq(500000000);	// VDD1_OPP5	500MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 500000000);
+				omap_device_set_rate(iva_dev, iva_dev, 400000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_6:
+				omap_pm_cpu_set_freq(400000000);	// VDD1_OPP4	400MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 400000000);
+				omap_device_set_rate(iva_dev, iva_dev, 300000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_7:
+				omap_pm_cpu_set_freq(300000000);	// VDD1_OPP3	300MHz
 				omap_device_set_rate(mpu_dev, mpu_dev, 300000000);
+				omap_device_set_rate(iva_dev, iva_dev, 260000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_8:
+				omap_pm_cpu_set_freq(220000000);	// VDD1_OPP2	220MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 220000000);
+				omap_device_set_rate(iva_dev, iva_dev, 260000000);
+				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
+				if(ds_status.l3_min_freq_to_lock == 0){
+					if(ds_status.flag_do_post_early_suspend == 0)
+						omap_device_set_rate(l3_dev, l3_dev, 200000000);
+					else
+						omap_device_set_rate(l3_dev, l3_dev, 100000000);
+				}
+				else{
+					omap_device_set_rate(l3_dev, l3_dev, ds_status.l3_min_freq_to_lock);
+//printk(KERN_WARNING "l3 locked %lu\n", ds_status.l3_min_freq_to_lock);
+				}
+
+				break;
+			case DS_CPU_OP_INDEX_9:
+#endif
+			default:
+				omap_pm_cpu_set_freq(120000000);	// VDD1_OPP1	120MHz
+				omap_device_set_rate(mpu_dev, mpu_dev, 120000000);
 				omap_device_set_rate(iva_dev, iva_dev, 260000000);
 				/* A treatment to integrate DSP 800MHz patch into LG-DVFS */
 				if(ds_status.l3_min_freq_to_lock == 0){

@@ -39,13 +39,38 @@
  * Definitions
  ***************************************************************************/
 
-/* The 4 operating points (CPU_OP) supported by Hub (LU3000)'s OMAP3630
+#ifdef CONFIG_CPU_OVERCLOCK
+/* Bloodawn: The 16 operating points (CPU_OP)
 
-	CPU_OP 0: (1000 MHz, 1.35V),	Scaling factor 1	= 0x1000 in fixed point number
-	CPU_OP 1: ( 800 MHz, 1.26V),	Scaling factor 0.8	= 0xccc
-	CPU_OP 2: ( 600 MHz, 1.10V),	Scaling factor 0.6	= 0x999
-	CPU_OP 3: ( 300 MHz, 0.93V),	Scaling factor 0.3	= 0x4cc
+	CPU_OP 0: (1360 MHz, 1.48V),	Scaling factor 1	= 0x1000 in fixed point number
+	CPU_OP 1: (1340 MHz, 1.47V),	Scaling factor 0.96	= 0x96c
+	CPU_OP 2: (1320 MHz, 1.46V),	Scaling factor 0.95	= 0x95b
+	CPU_OP 3: (1300 MHz, 1.45V),	Scaling factor 0.94	= 0x94a
+	CPU_OP 4: (1200 MHz, 1.40V),	Scaling factor 0.93	= 0x93c
+	CPU_OP 5: (1100 MHz, 1.35V),	Scaling factor 0.92	= 0x92b
+	CPU_OP 6: (1000 MHz, 1.30V),	Scaling factor 0.91 = 0x91a
+	CPU_OP 7: ( 900 MHz, 1.25V),	Scaling factor 0.9	= 0x90c
+	CPU_OP 8: ( 800 MHz, 1.20V),	Scaling factor 0.8  = 0x80b
+	CPU_OP 9: ( 700 MHz, 1.15V),	Scaling factor 0.7  = 0x70a
+	CPU_OP 10: ( 600 MHz, 1.10V),	Scaling factor 0.6  = 0x60c
+	CPU_OP 11: ( 500 MHz, 1.05V),	Scaling factor 0.5	= 0x50b
+	CPU_OP 12: ( 400 MHz, 1.00V),	Scaling factor 0.4	= 0x40a
+	CPU_OP 13: ( 300 MHz, 0.98V),	Scaling factor 0.3  = 0x30c
+	CPU_OP 14: ( 220 MHz, 0.94V),	Scaling factor 0.2	= 0x20b
+	CPU_OP 15: ( 120 MHz, 0.84V),	Scaling factor 0.1  = 0x10a
 
+	set_opp(&vdd1_opp, VDD1_OPP16)
+	set_opp(&vdd1_opp, VDD1_OPP15)
+	set_opp(&vdd1_opp, VDD1_OPP14)
+	set_opp(&vdd1_opp, VDD1_OPP13)
+	set_opp(&vdd1_opp, VDD1_OPP12)
+	set_opp(&vdd1_opp, VDD1_OPP11)
+	set_opp(&vdd1_opp, VDD1_OPP10)
+	set_opp(&vdd1_opp, VDD1_OPP9)
+	set_opp(&vdd1_opp, VDD1_OPP8)
+	set_opp(&vdd1_opp, VDD1_OPP7)
+	set_opp(&vdd1_opp, VDD1_OPP6)
+	set_opp(&vdd1_opp, VDD1_OPP5)
 	set_opp(&vdd1_opp, VDD1_OPP4)
 	set_opp(&vdd1_opp, VDD1_OPP3)
 	set_opp(&vdd1_opp, VDD1_OPP2)
@@ -53,21 +78,45 @@
  */
 
 /* The number of CPU_OPs to use */
-#define DS_CPU_OP_LIMIT			4
+#define DS_CPU_OP_LIMIT			16
 
 /* To cope with touch and key inputs */
 #define DS_TOUCH_TIMEOUT_COUNT_MAX	7
 
 /* The CPU_OP indices */
-#define DS_CPU_OP_INDEX_0		1000000000
-#define DS_CPU_OP_INDEX_1		800000000
-#define DS_CPU_OP_INDEX_2		600000000
-#define DS_CPU_OP_INDEX_3		300000000
+#define DS_CPU_OP_INDEX_0		1360000000
+#define DS_CPU_OP_INDEX_1		1340000000
+#define DS_CPU_OP_INDEX_2		1320000000
+#define DS_CPU_OP_INDEX_3		1300000000
+#define DS_CPU_OP_INDEX_4		1200000000
+#define DS_CPU_OP_INDEX_5		1100000000
+#define DS_CPU_OP_INDEX_6		1000000000
+#define DS_CPU_OP_INDEX_7		900000000
+#define DS_CPU_OP_INDEX_8		800000000
+#define DS_CPU_OP_INDEX_9		700000000
+#define DS_CPU_OP_INDEX_10		600000000
+#define DS_CPU_OP_INDEX_11		500000000
+#define DS_CPU_OP_INDEX_12		400000000
+#define DS_CPU_OP_INDEX_13		300000000
+#define DS_CPU_OP_INDEX_14		220000000
+#define DS_CPU_OP_INDEX_15		120000000
 
 #define DS_CPU_OP_INDEX_MAX			DS_CPU_OP_INDEX_0
 #define DS_CPU_OP_INDEX_N2MAX		DS_CPU_OP_INDEX_1
-#define DS_CPU_OP_INDEX_N2MIN		DS_CPU_OP_INDEX_2
-#define DS_CPU_OP_INDEX_MIN			DS_CPU_OP_INDEX_3
+#define DS_CPU_OP_INDEX_N3MAX		DS_CPU_OP_INDEX_2
+#define DS_CPU_OP_INDEX_N4MAX		DS_CPU_OP_INDEX_3
+#define DS_CPU_OP_INDEX_N5MAX		DS_CPU_OP_INDEX_4
+#define DS_CPU_OP_INDEX_N6MAX		DS_CPU_OP_INDEX_5
+#define DS_CPU_OP_INDEX_N7MAX		DS_CPU_OP_INDEX_6
+#define DS_CPU_OP_INDEX_N8MAX		DS_CPU_OP_INDEX_7
+#define DS_CPU_OP_INDEX_N9MAX		DS_CPU_OP_INDEX_8
+#define DS_CPU_OP_INDEX_N10MAX		DS_CPU_OP_INDEX_9
+#define DS_CPU_OP_INDEX_N11MAX		DS_CPU_OP_INDEX_10
+#define DS_CPU_OP_INDEX_N12MAX		DS_CPU_OP_INDEX_11
+#define DS_CPU_OP_INDEX_N13MAX		DS_CPU_OP_INDEX_12
+#define DS_CPU_OP_INDEX_N3MIN	    DS_CPU_OP_INDEX_13
+#define DS_CPU_OP_INDEX_N2MIN		DS_CPU_OP_INDEX_14
+#define DS_CPU_OP_INDEX_MIN 		DS_CPU_OP_INDEX_15
 
 /* The scaling factors */
 /* These values mean the U(20,12) fixed point numbers' 12bit fractions.
@@ -91,9 +140,108 @@
  * 0.75 = 0.5 + 0.25	= 0000 0000 0000 0000 0000 1100 0000 0000 = 0x00000c00
  */
 #define DS_CPU_OP_SF_0			0x1000	// 1
-#define DS_CPU_OP_SF_1			0xccc	// 0.8
-#define DS_CPU_OP_SF_2			0x999	// 0.6
-#define DS_CPU_OP_SF_3			0x4cc	// 0.3
+#define DS_CPU_OP_SF_1			0x96c	// 0.96
+#define DS_CPU_OP_SF_2			0x95b	// 0.95
+#define DS_CPU_OP_SF_3			0x94a	// 0.94
+#define DS_CPU_OP_SF_4			0x93c	// 0.93
+#define DS_CPU_OP_SF_5			0x92b	// 0.92
+#define DS_CPU_OP_SF_6			0x91a	// 0.91
+#define DS_CPU_OP_SF_7			0x90c	// 0.9
+#define DS_CPU_OP_SF_8			0x80b	// 0.8
+#define DS_CPU_OP_SF_9			0x70a	// 0.7
+#define DS_CPU_OP_SF_10			0x60c	// 0.6
+#define DS_CPU_OP_SF_11			0x50b	// 0.5
+#define DS_CPU_OP_SF_12			0x40a	// 0.4
+#define DS_CPU_OP_SF_13			0x30c	// 0.3
+#define DS_CPU_OP_SF_14			0x20b	// 0.2
+#define DS_CPU_OP_SF_15			0x10a	// 0.1
+#else
+/* Bloodawn: The 10 operating points (CPU_OP)
+
+	CPU_OP 0: (1000 MHz, 1.30V),	Scaling factor 1	= 0x1000 in fixed point number
+	CPU_OP 1: ( 900 MHz, 1.25V),	Scaling factor 0.9	= 0x90c
+	CPU_OP 2: ( 800 MHz, 1.20V),	Scaling factor 0.8  = 0x80b
+	CPU_OP 3: ( 700 MHz, 1.15V),	Scaling factor 0.7  = 0x70a
+	CPU_OP 4: ( 600 MHz, 1.10V),	Scaling factor 0.6  = 0x60c
+	CPU_OP 5: ( 500 MHz, 1.05V),	Scaling factor 0.5	= 0x50b
+	CPU_OP 6: ( 400 MHz, 1.00V),	Scaling factor 0.4	= 0x40a
+	CPU_OP 7: ( 300 MHz, 0.98V),	Scaling factor 0.3  = 0x30c
+	CPU_OP 8: ( 220 MHz, 0.94V),	Scaling factor 0.2	= 0x20b
+	CPU_OP 9: ( 120 MHz, 0.84V),	Scaling factor 0.1  = 0x10a
+
+	set_opp(&vdd1_opp, VDD1_OPP10)
+	set_opp(&vdd1_opp, VDD1_OPP9)
+	set_opp(&vdd1_opp, VDD1_OPP8)
+	set_opp(&vdd1_opp, VDD1_OPP7)
+	set_opp(&vdd1_opp, VDD1_OPP6)
+	set_opp(&vdd1_opp, VDD1_OPP5)
+	set_opp(&vdd1_opp, VDD1_OPP4)
+	set_opp(&vdd1_opp, VDD1_OPP3)
+	set_opp(&vdd1_opp, VDD1_OPP2)
+	set_opp(&vdd1_opp, VDD1_OPP1)
+ */
+
+/* The number of CPU_OPs to use */
+#define DS_CPU_OP_LIMIT			10
+
+/* To cope with touch and key inputs */
+#define DS_TOUCH_TIMEOUT_COUNT_MAX	7
+
+/* The CPU_OP indices */
+#define DS_CPU_OP_INDEX_0		1000000000
+#define DS_CPU_OP_INDEX_1		900000000
+#define DS_CPU_OP_INDEX_2		800000000
+#define DS_CPU_OP_INDEX_3		700000000
+#define DS_CPU_OP_INDEX_4		600000000
+#define DS_CPU_OP_INDEX_5		500000000
+#define DS_CPU_OP_INDEX_6		400000000
+#define DS_CPU_OP_INDEX_7		300000000
+#define DS_CPU_OP_INDEX_8		220000000
+#define DS_CPU_OP_INDEX_9		120000000
+
+#define DS_CPU_OP_INDEX_MAX			DS_CPU_OP_INDEX_0
+#define DS_CPU_OP_INDEX_N2MAX		DS_CPU_OP_INDEX_1
+#define DS_CPU_OP_INDEX_N3MAX		DS_CPU_OP_INDEX_2
+#define DS_CPU_OP_INDEX_N4MAX		DS_CPU_OP_INDEX_3
+#define DS_CPU_OP_INDEX_N5MAX		DS_CPU_OP_INDEX_4
+#define DS_CPU_OP_INDEX_N5MIN	    DS_CPU_OP_INDEX_5
+#define DS_CPU_OP_INDEX_N4MIN		DS_CPU_OP_INDEX_6
+#define DS_CPU_OP_INDEX_N3MIN		DS_CPU_OP_INDEX_7
+#define DS_CPU_OP_INDEX_N2MIN		DS_CPU_OP_INDEX_8
+#define DS_CPU_OP_INDEX_MIN			DS_CPU_OP_INDEX_9
+
+/* The scaling factors */
+/* These values mean the U(20,12) fixed point numbers' 12bit fractions.
+ * In this format, 
+ *					------ Decimal part ------ -- Fraction --
+ * 1				= 0000 0000 0000 0000 0001 0000 0000 0000 = 0x00001000
+ * 0.5				= 0000 0000 0000 0000 0000 1000 0000 0000 = 0x00000800
+ * 0.25				= 0000 0000 0000 0000 0000 0100 0000 0000 = 0x00000400
+ * 0.125			= 0000 0000 0000 0000 0000 0010 0000 0000 = 0x00000200
+ * 0.0625			= 0000 0000 0000 0000 0000 0001 0000 0000 = 0x00000100
+ * 0.03125			= 0000 0000 0000 0000 0000 0000 1000 0000 = 0x00000080
+ * 0.015625			= 0000 0000 0000 0000 0000 0000 0100 0000 = 0x00000040
+ * 0.0078125 		= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000020	
+ * 0.00390625		= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000010	
+ * 0.0019553125		= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000008	
+ * 0.0009765625		= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000004	
+ * 0.00048828125	= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000002	
+ * 0.000244140625	= 0000 0000 0000 0000 0000 0000 0010 0000 = 0x00000001	
+ *
+ * Ex)
+ * 0.75 = 0.5 + 0.25	= 0000 0000 0000 0000 0000 1100 0000 0000 = 0x00000c00
+ */
+#define DS_CPU_OP_SF_0			0x1000	// 1
+#define DS_CPU_OP_SF_1			0x90c	// 0.9
+#define DS_CPU_OP_SF_2			0x80b	// 0.8
+#define DS_CPU_OP_SF_3			0x70a	// 0.7
+#define DS_CPU_OP_SF_4			0x60c	// 0.6
+#define DS_CPU_OP_SF_5			0x50b	// 0.5
+#define DS_CPU_OP_SF_6			0x40a	// 0.4
+#define DS_CPU_OP_SF_7			0x30c	// 0.3
+#define DS_CPU_OP_SF_8			0x20b	// 0.2
+#define DS_CPU_OP_SF_9			0x10a	// 0.1
+#endif
 
 /* The conversion macros between index and mhz/mv */
 #if 0	// To do. The following is for Pentium M
@@ -101,29 +249,125 @@
 #endif
 
 /* WARNING! Not precise! */
+#ifdef CONFIG_CPU_OVERCLOCK
+#define DS_INDEX2MHZ(index) \
+((index)==1360000000 ? 1360 : \
+((index)==1340000000 ? 1340 : \
+((index)==1320000000 ? 1320 : \
+((index)==1300000000 ? 1300 : \
+((index)==1200000000 ? 1200 : \
+((index)==1100000000 ? 1100 : \
+((index)==1000000000 ? 1000 : \
+((index)==900000000 ? 900 : \
+((index)==800000000 ? 800 : \
+((index)==700000000 ? 700 : \
+((index)==600000000 ? 600 : \
+((index)==500000000 ? 500 : \
+((index)==400000000 ? 400 : \
+((index)==300000000 ? 300 : \
+((index)==220000000 ? 220 : 120)))))))))))))))
+
+#define DS_INDEX2MHZPRECISE(index) \
+((index)==1360000000 ? 1360 : \
+((index)==1340000000 ? 1340 : \
+((index)==1320000000 ? 1320 : \
+((index)==1300000000 ? 1300 : \
+((index)==1200000000 ? 1200 : \
+((index)==1100000000 ? 1100 : \
+((index)==1000000000 ? 1000 : \
+((index)==900000000 ? 900 : \
+((index)==800000000 ? 800 : \
+((index)==700000000 ? 700 : \
+((index)==600000000 ? 600 : \
+((index)==500000000 ? 500 : \
+((index)==400000000 ? 400 : \
+((index)==300000000 ? 300 : \
+((index)==220000000 ? 220 : 120)))))))))))))))
+#else
 #define DS_INDEX2MHZ(index) \
 ((index)==1000000000 ? 1000 : \
+((index)==900000000 ? 900 : \
 ((index)==800000000 ? 800 : \
-((index)==600000000 ? 600 : 300)))
+((index)==700000000 ? 700 : \
+((index)==600000000 ? 600 : \
+((index)==500000000 ? 500 : \
+((index)==400000000 ? 400 : \
+((index)==300000000 ? 300 : \
+((index)==300000000 ? 220 : 120)))))))))
 
 #define DS_INDEX2MHZPRECISE(index) \
 ((index)==1000000000 ? 1000 : \
+((index)==900000000 ? 900 : \
 ((index)==800000000 ? 800 : \
-((index)==600000000 ? 600 : 300)))
+((index)==700000000 ? 700 : \
+((index)==600000000 ? 600 : \
+((index)==500000000 ? 500 : \
+((index)==400000000 ? 400 : \
+((index)==300000000 ? 300 : \
+((index)==300000000 ? 220 : 120)))))))))
+#endif
 
 #if 0	// To do. The following is for Pentium M
 #define DS_INDEX2MV(index) 	(((int)(index)&0xff)*16+700)
 #endif
 
+#ifdef CONFIG_CPU_OVERCLOCK
+#define DS_INDEX2NR(index) \
+((index)==1360000000 ? 1 : \
+((index)==1340000000 ? 2 : \
+((index)==1320000000 ? 3 : \
+((index)==1300000000 ? 4 : \
+((index)==1200000000 ? 5 : \
+((index)==1100000000 ? 6 : \
+((index)==1000000000 ? 7 : \
+((index)==900000000 ? 8 : \
+((index)==800000000 ? 9 : \
+((index)==700000000 ? 10 : \
+((index)==600000000 ? 11 : \
+((index)==500000000 ? 12 : \
+((index)==400000000 ? 13 : \
+((index)==300000000 ? 14 : \
+((index)==220000000 ? 15 : 16)))))))))))))))
+
+#define DS_INDEX2SF(index) \
+((index)==1360000000 ? 0x1000 : \
+((index)==1340000000 ? 0x96c : \
+((index)==1320000000 ? 0x95b : \
+((index)==1300000000 ? 0x94a : \
+((index)==1200000000 ? 0x93c: \
+((index)==1100000000 ? 0x92b : \
+((index)==1000000000 ? 0x91a : \
+((index)==900000000 ? 0x90c : \
+((index)==800000000 ? 0x80b : \
+((index)==700000000 ? 0x70a : \
+((index)==600000000 ? 0x60c : \
+((index)==500000000 ? 0x50b : \
+((index)==400000000 ? 0x40a : \
+((index)==300000000 ? 0x30c : \
+((index)==220000000 ? 0x20b : 0x10a)))))))))))))))
+#else
 #define DS_INDEX2NR(index) \
 ((index)==1000000000 ? 0 : \
-((index)==800000000 ? 1 : \
-((index)==600000000 ? 2 : 3)))
+((index)==900000000 ? 1 : \
+((index)==800000000 ? 2 : \
+((index)==700000000 ? 3 : \
+((index)==600000000 ? 7 : \
+((index)==500000000 ? 5 : \
+((index)==400000000 ? 6 : \
+((index)==300000000 ? 7 : \
+((index)==220000000 ? 8 : 9)))))))))
 
 #define DS_INDEX2SF(index) \
 ((index)==1000000000 ? 0x1000 : \
-((index)==800000000 ? 0xccc : \
-((index)==600000000 ? 0x999 : 0x4cc)))
+((index)==900000000 ? 0x90c : \
+((index)==800000000 ? 0x80b : \
+((index)==700000000 ? 0x70a : \
+((index)==600000000 ? 0x60c : \
+((index)==500000000 ? 0x50b : \
+((index)==400000000 ? 0x40a : \
+((index)==300000000 ? 0x30c : \
+((index)==220000000 ? 0x20b : 0x10a)))))))))
+#endif
 
 /* For ds_status.cpu_mode */
 #define DS_CPU_MODE_IDLE		0
