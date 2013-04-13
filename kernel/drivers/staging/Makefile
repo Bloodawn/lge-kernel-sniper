@@ -57,3 +57,4 @@ obj-$(CONFIG_MSM_STAGING)	+= msm/
 obj-$(CONFIG_OMAP_HSI)		+= omap_hsi/
 obj-$(CONFIG_ZRAM)              += zram/
 obj-$(CONFIG_XVMALLOC)          += zram/
+obj-$(CONFIG_ZCACHE)		+= zcache/
