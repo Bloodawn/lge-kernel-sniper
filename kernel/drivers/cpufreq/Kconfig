@@ -123,6 +123,84 @@ config CPU_FREQ_DEFAULT_GOV_HOTPLUG
 	  support the hotplug governor. If unsure have a look at
 	  the help section of the driver. Fallback governor will be the
 	  performance governor.
+
+config CPU_FREQ_DEFAULT_GOV_BRAZILIANWAX
+        bool "brazilianwax"
+        select CPU_FREQ_GOV_BRAZILIANWAX
+        help
+          Use the CPUFreq governor 'brazilianwax' as default.
+
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
+        bool "interactive"
+        select CPU_FREQ_GOV_INTERACTIVE
+        help
+          Use the CPUFreq governor 'interactive' as default.
+  
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
+        bool "interactivex"
+        select CPU_FREQ_GOV_INTERACTIVEX
+        help
+          Use the CPUFreq governor 'interactivex' as default.
+  
+config CPU_FREQ_DEFAULT_GOV_LAGFREE
+        bool "lagfree"
+        select CPU_FREQ_GOV_LAGFREE
+        help
+          Use the CPUFreq governor 'lagfree' as default.
+
+config CPU_FREQ_DEFAULT_GOV_LAZY
+        bool "lazy"
+        select CPU_FREQ_GOV_LAZY
+        help
+          Use the CPUFreq governor 'lazy' as default.
+
+config CPU_FREQ_DEFAULT_GOV_LIONHEART
+        bool "Lionheart"
+        select CPU_FREQ_GOV_LIONHEART
+        help
+          Use the CPUFreq governor 'Lionheart' as default.
+
+config CPU_FREQ_DEFAULT_GOV_MINMAX
+        bool "minmax"
+        select CPU_FREQ_GOV_MINMAX
+        help
+          Use the CPUFreq governor 'minmax' as default.
+
+config CPU_FREQ_DEFAULT_GOV_ONDEMANDX
+        bool "ondemandX"
+        select CPU_FREQ_GOV_ONDEMANDX
+        help
+          Use the CPUFreq governor 'ondemandX' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SAVAGEDZEN
+        bool "SavagedZen"
+        select CPU_FREQ_GOV_SAVAGEDZEN
+        help
+          Use the CPUFreq governor 'SavagedZen' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SCARY
+        bool "Scary"
+        select CPU_FREQ_GOV_SCARY
+        help
+          Use the CPUFreq governor 'Scary' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SMARTASS
+        bool "smartass"
+        select CPU_FREQ_GOV_SMARTASS
+        help
+          Use the CPUFreq governor 'smartass' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SMARTASS2
+        bool "smartass2"
+        select CPU_FREQ_GOV_SMARTASS2
+        help
+          Use the CPUFreq governor 'smartass2' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SMOOTHASS
+        bool "smoothass"
+        select CPU_FREQ_GOV_SMOOTHASS
+        help
+          Use the CPUFreq governor 'smoothass' as default.
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -202,6 +280,119 @@ config CPU_FREQ_GOV_CONSERVATIVE
 	  For details, take a look at linux/Documentation/cpu-freq.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_BRAZILIANWAX
+	tristate "'brazilianwax' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'brazilianwax' - a "slightly more agressive smart" optimized governor!
+
+config CPU_FREQ_GOV_INTERACTIVE
+	tristate "'interactive' cpufreq policy governor"
+	help
+	 'interactive' - This driver adds a dynamic cpufreq policy governor.
+	 Designed for low latency burst workloads. Scaling it done when coming
+	 out of idle instead of polling.
+
+config CPU_FREQ_GOV_INTERACTIVEX
+	tristate "'interactivex' cpufreq policy governor"
+	help
+	  'interactivex' - Modified version of interactive with sleep+wake code.
+
+config CPU_FREQ_GOV_LAGFREE
+        tristate "'lagfree' cpufreq governor"
+        depends on CPU_FREQ
+        help
+          'lagfree' - this driver is rather similar to the 'ondemand'
+          governor both in its source code and its purpose, the difference is
+          its optimisation for better suitability in a battery powered
+          environment.  The frequency is gracefully increased and decreased
+          rather than jumping to 100% when speed is required.
+
+config CPU_FREQ_GOV_LAZY
+    tristate "'lazy' cpufreq governor"
+    depends on CPU_FREQ
+
+config CPU_FREQ_GOV_LIONHEART
+	tristate "'Lionheart' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'Lionheart' - A brave and agile conservative-based governor.
+
+          To compile this driver as a module, choose M here: the
+          module will be called cpufreq_lagfree.
+
+          For details, take a look at linux/Documentation/cpu-freq.
+
+          If in doubt, say N.
+
+config CPU_FREQ_GOV_MINMAX
+	tristate "'minmax' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'minmax' - this driver tries to minimize the frequency jumps by limiting
+	  the the selected frequencies to either the min or the max frequency of
+	  the policy. The frequency is selected according to the load.
+
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_ONDEMANDX
+	tristate "'ondemandx' cpufreq policy governor"
+	select CPU_FREQ_TABLE
+	help
+	  'ondemandX' - Modified version of ondemand with sleep+wake code.
+
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_SAVAGEDZEN
+	tristate "'savagedzen' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	   'Savaged-Zen' - a "smartass" based governor
+	   If in doubt, say N.
+
+config CPU_FREQ_GOV_SCARY
+	tristate "'Scary' cpufreq governor"
+	depends on CPU_FREQ
+	help
+		Scary - a governor for cabbages
+
+		If in doubt, say N.
+
+config CPU_FREQ_GOV_SMARTASS
+	tristate "'smartass' cpufreq governor"
+	depends on CPU_FREQ
+	help
+		'smartass' - a "smart" optimized governor
+
+config CPU_FREQ_GOV_SMARTASS2
+	tristate "'smartass2' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'smartass2' - a "smart" optimized governor for the hero!
+
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_SMOOTHASS
+	tristate "'smoothass' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	smoothass' - a "slightly more agressive smartass" governor!
+ 	
+	If in doubt, say N.
+
+config CPU_FREQ_MIN_TICKS
+	int "Ticks between governor polling interval."
+	default 10
+	help
+	  Minimum number of ticks between polling interval for governors.
+
+config CPU_FREQ_SAMPLING_LATENCY_MULTIPLIER
+	int "Sampling rate multiplier for governors."
+	default 1000
+	help
+	  Sampling latency rate multiplied by the cpu switch latency.
+	  Affects governor polling.
 
 config CPU_FREQ_GOV_HOTPLUG
 	tristate "'hotplug' cpufreq governor"
