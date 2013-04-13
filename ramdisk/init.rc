@@ -1,0 +1,1261 @@
+on early-init
+    start ueventd
+
+on init
+
+sysclktz 0
+
+loglevel 3
+
+# cpufreq defaults
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
+
+# setup the global environment
+    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+    export LD_LIBRARY_PATH /vendor/lib:/system/lib
+    export ANDROID_BOOTLOGO 1
+    export ANDROID_ROOT /system
+    export ANDROID_ASSETS /system/app
+    export ANDROID_DATA /data
+    export EXTERNAL_STORAGE /mnt/sdcard
+    export ASEC_MOUNTPOINT /mnt/asec
+    export LOOP_MOUNTPOINT /mnt/obb
+    export BOOTCLASSPATH /system/framework/core.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/core-junit.jar
+    export DSP_PATH /system/lib/dsp
+    export DEFAULT_BASEIMAGE /system/lib/dsp/baseimage.dof
+    export QOSDYN_FILE /system/lib/dsp/qosdyn_3430.dll64P
+    export PM_TBLFILE /system/etc/policytable.tbl
+    export BT_FW_PATH /system/lib/firmware    
+    export TMPDIR /data/local/tmp
+
+# Backward compatibility
+    symlink /system/etc /etc
+    symlink /system/lib /lib
+    symlink /sys/kernel/debug /d
+
+# Right now vendor lives on the same filesystem as system,
+# but someday that may change.
+    symlink /system/vendor /vendor
+
+# create mountpoints
+    mkdir /mnt 0775 root system
+    mkdir /mnt/sdcard 0000 system system
+
+# Create cgroup mount point for cpu accounting
+    mkdir /acct
+    mount cgroup none /acct cpuacct
+    mkdir /acct/uid
+
+# Backwards Compat - XXX: Going away in G*
+    symlink /mnt/sdcard /sdcard
+    mkdir /system
+    mkdir /data 0771 system system
+    mkdir /cache 0770 system cache
+    mkdir /config 0500 root root
+# LGE_CHANGE_S, bae.cheolhwan@lge.com, 2011-05-16. Modify a UTS issue (permission issue).
+    mkdir /tmp 01771 root system
+# LGE_CHANGE_E, bae.cheolhwan@lge.com, 2011-05-16. Modify a UTS issue (permission issue).
+
+    mkdir /sqlite_stmt_journals 01771 root camera
+    mount tmpfs tmpfs /sqlite_stmt_journals size=4m
+    chmod 1771 /sqlite_stmt_journals
+    chown root camera /sqlite_stmt_journals
+
+    # Directory for putting things only root should see.
+    mkdir /mnt/secure 0700 root root
+
+    # Directory for staging bindmounts
+    mkdir /mnt/secure/staging 0700 root root
+
+    # Directory-target for where the secure container
+    # imagefile directory will be bind-mounted
+    mkdir /mnt/secure/asec  0700 root root
+
+    # Secure container public mount points.
+    mkdir /mnt/asec  0700 root system
+    mount tmpfs tmpfs /mnt/asec mode=0755,gid=1000
+
+#LGE_MERGE_S jaebok.yang (2011.05.24) : Merge from GB Original for fixing CTS Fail (testMountAndUnmountObbNormal, testMountAndUnmountTwoObbs)
+    # Filesystem image public mount points.
+    mkdir /mnt/obb 0700 root system
+    mount tmpfs tmpfs /mnt/obb mode=0755,gid=1000
+#LGE_MERGE_E jaebok.yang (2011.05.24) : Merge from GB Original for fixing CTS Fail (testMountAndUnmountObbNormal, testMountAndUnmountTwoObbs)
+
+#[LGE_start] hyunwoong.ahn
+    mkdir /dvp 0771 system system
+    mkdir /dvp/hwkey 0771 system system
+    mkdir /dvp/userdata 0771 system system
+#[LGE_end] hyunwoong.ahn
+    mount rootfs rootfs / ro remount
+
+    write /proc/sys/kernel/panic_on_oops 1
+    write /proc/sys/kernel/hung_task_timeout_secs 0
+    write /proc/cpu/alignment 4
+    write /proc/sys/kernel/sched_latency_ns 10000000
+    write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
+    write /proc/sys/kernel/sched_compat_yield 1
+    write /proc/sys/kernel/sched_child_runs_first 0
+
+# Create cgroup mount points for process groups
+    mkdir /dev/cpuctl
+    mount cgroup none /dev/cpuctl cpu
+    chown system system /dev/cpuctl
+    chown system system /dev/cpuctl/tasks
+    chmod 0777 /dev/cpuctl/tasks
+    write /dev/cpuctl/cpu.shares 1024
+
+    mkdir /dev/cpuctl/fg_boost
+    chown system system /dev/cpuctl/fg_boost/tasks
+    chmod 0777 /dev/cpuctl/fg_boost/tasks
+    write /dev/cpuctl/fg_boost/cpu.shares 1024
+
+    mkdir /dev/cpuctl/bg_non_interactive
+    chown system system /dev/cpuctl/bg_non_interactive/tasks
+    chmod 0777 /dev/cpuctl/bg_non_interactive/tasks
+    # 5.0 %
+    write /dev/cpuctl/bg_non_interactive/cpu.shares 52
+
+on fs
+# mount ext4 partitions
+    # /system
+    mount ext4 /dev/block/mmcblk0p5 /system noatime barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    
+    # /data
+	wait /dev/block/mmcblk0p6
+	chmod 0777 /system/bin/resize2fs
+	chmod 0777 /system/bin/e2fsck
+	exec /system/bin/resize2fs /dev/block/mmcblk0p6
+	exec /system/bin/e2fsck -y /dev/block/mmcblk0p6
+	mount ext4 /dev/block/mmcblk0p6 /data rw noatime nosuid nodev barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    chown system system /data
+    chmod 0771 /data
+    
+    # /cache
+	wait /dev/block/mmcblk0p7
+	chmod 0777 /system/bin/resize2fs
+	chmod 0777 /system/bin/e2fsck
+	exec /system/bin/resize2fs /dev/block/mmcblk0p7
+	exec /system/bin/e2fsck -y /dev/block/mmcblk0p7    
+        mount ext4 /dev/block/mmcblk0p7 /cache rw noatime nosuid nodev barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    chown system cache /cache
+    chmod 0770 /cache
+    
+#[LGE_star]Hyunwoong.ahn
+    mount ext4 /dev/block/mmcblk0p9 /dvp/hwkey noatime nosuid nodev barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    chown system system /dvp/hwkey
+    chown system divxdrm /dvp/hwkey/key.hw
+    chmod 0660 /dvp/hwkey/key.hw	
+    mount ext4 /dev/block/mmcblk0p9 /dvp/userdata noatime nosuid nodev barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    chown system divxdrm /dvp/userdata
+    chmod 0770 /dvp/userdata
+#[LGE_end]Hyunwoong.ahn
+
+# LGE_CHANGE_S, seokjae.yoon@lge.com, 2011-02-28, To fix the function of Factory Reset
+    chown system system /dev/block/mmcblk0p10
+    chown system radio /dev/block/mmcblk0p12
+    chmod 0660 /dev/block/mmcblk0p10
+    chmod 0660 /dev/block/mmcblk0p12
+# LGE_CHANGE_E, seokjae.yoon@lge.com, 2011-02-28, To fix the function of Factory Reset
+# LGE_CHANGE_S, sangmin.baek@lge.com, 2011-03-21, for fota
+    chown root radio /dev/block/mmcblk0
+    chmod 0660 /dev/block/mmcblk0
+# LGE_CHANGE_E, sangmin.baek@lge.com, 2011-03-21, for fota
+
+    # Create dump dir and collect dumps.
+    # Do this before we mount cache so eventually we can use cache for
+    # storing dumps on platforms which do not have a dedicated dump partition.
+   
+    mkdir /data/dontpanic
+    chown root log /data/dontpanic
+# LGE_CHANGE_S, allowed to access in HiddenMenu  
+    chmod 0755 /data/dontpanic
+# LGE_CHANGE_E, allowed to access in HiddenMenu      
+
+    # Collect apanic data, free resources and re-arm trigger
+    copy /proc/apanic_console /data/dontpanic/apanic_console
+    chown root log /data/dontpanic/apanic_console
+    chmod 0640 /data/dontpanic/apanic_console
+
+    copy /proc/apanic_threads /data/dontpanic/apanic_threads
+    chown root log /data/dontpanic/apanic_threads
+    chmod 0640 /data/dontpanic/apanic_threads
+
+    write /proc/apanic_console 1
+
+    # Collect ramconsole data
+    copy /proc/last_kmsg /data/dontpanic/last_kmsg
+    chown root log /data/dontpanic/last_kmsg
+# LGE_CHANGE_S, allowed to access in HiddenMenu     
+    chmod 0644 /data/dontpanic/last_kmsg
+# LGE_CHANGE_E, allowed to access in HiddenMenu     
+
+    # This may have been created by the recovery system with odd permissions
+    chown system cache /cache/recovery
+    chmod 0770 /cache/recovery
+
+    #change permissions on vmallocinfo so we can grab it from bugreports
+    chown root log /proc/vmallocinfo
+    chmod 0440 /proc/vmallocinfo
+
+    #change permissions on kmsg & sysrq-trigger so bugreports can grab kthread stacks
+    chown root system /proc/kmsg
+    chmod 0440 /proc/kmsg
+    chown root system /proc/sysrq-trigger
+    chmod 0220 /proc/sysrq-trigger
+
+# LGE_CHANGE_S, bae.cheolhwan@lge.com, 2011-05-10. Modify a hidden reset fuction.
+    chown system system /sys/power/hidden_reset
+    chmod 0664 /sys/power/hidden_reset
+    chown system system /sys/power/reset_status
+    chmod 0664 /sys/power/reset_status
+# LGE_CHANGE_E, bae.cheolhwan@lge.com, 2011-05-10. Modify a hidden reset fuction.
+
+    # change permission because of FactoryTestService.java 20110326 [jaejoong.kim@lge.com]
+    chmod 0777 /proc/driver/hmuic
+    chown system system /proc/driver/hmuic
+
+# Enable LG-DVFS
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/turn_on_lg_dvfs
+    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/turn_on_lg_dvfs
+    write /sys/devices/system/cpu/cpu0/cpufreq/turn_on_lg_dvfs 1
+
+# Enable SmartReflex autocompensation on VDD1 & VDD2
+	mount debugfs debugfs /sys/kernel/debug mode=0755,gid=1000
+
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_mpu/autocomp
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_core/autocomp
+# Disable SmartReflex Vdd1 Only
+	write /sys/kernel/debug/pm_debug/smartreflex/sr_mpu/autocomp 0
+	write /sys/kernel/debug/pm_debug/smartreflex/sr_core/autocomp 1
+
+#20110805 yongman.kwon@lge.com [LS855] change debug sys file permission for CTS [START]
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_core/errminlimit
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_core/errmaxlimit
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_core/errweight
+	
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_mpu/errminlimit
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_mpu/errmaxlimit
+	chmod 0664 /sys/kernel/debug/pm_debug/smartreflex/sr_mpu/errweight	
+
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_timeout
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_vddmin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_vddmax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_stepmax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_smpswaittimemax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_stepmin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_smpswaittimemin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_core/vp_errorgain	
+
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/fbb_enable
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_timeout
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_vddmin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_vddmax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_stepmax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_smpswaittimemax
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_stepmin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_smpswaittimemin
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage/vdd_mpu/vp_errorgain 
+
+	chmod 0664 /sys/kernel/debug/pm_debug/voltage_off_while_idle
+	chmod 0664 /sys/kernel/debug/pm_debug/enable_sr_vp_debug
+	chmod 0664 /sys/kernel/debug/pm_debug/wakeup_timer_milliseconds
+	chmod 0664 /sys/kernel/debug/pm_debug/wakeup_timer_seconds
+	chmod 0664 /sys/kernel/debug/pm_debug/sleep_while_idle
+	chmod 0664 /sys/kernel/debug/pm_debug/enable_off_mode	
+
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad36
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad35
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad34
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad33
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad32
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad29
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mcad28
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_swrite
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_sread
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_sbusflag
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mwrite
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mread
+	chmod 0220 /sys/kernel/debug/omap_mux/sad2d_mbusflag
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a11
+	chmod 0220 /sys/kernel/debug/omap_mux/uart3_tx_irtx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart3_rx_irrx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart3_rts_sd
+	chmod 0220 /sys/kernel/debug/omap_mux/uart3_cts_rctx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart2_tx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart2_rx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart2_rts
+	chmod 0220 /sys/kernel/debug/omap_mux/uart2_cts
+	chmod 0220 /sys/kernel/debug/omap_mux/uart1_tx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart1_rx
+	chmod 0220 /sys/kernel/debug/omap_mux/uart1_rts
+	chmod 0220 /sys/kernel/debug/omap_mux/uart1_cts
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_off_mode
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_nreswarm
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_nirq
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_clkreq
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_clkout2
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_clkout1
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot6
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot5
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot4
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot3
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot2
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot1
+	chmod 0220 /sys/kernel/debug/omap_mux/sys_boot0
+	chmod 0220 /sys/kernel/debug/omap_mux/sdrc_cke1
+	chmod 0220 /sys/kernel/debug/omap_mux/sdrc_cke0
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat7
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat6
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat5
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat4
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat3
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat2
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat1
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_dat0
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_cmd
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc2_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat7
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat6
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat5
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat4
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat3
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat2
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat1
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_dat0
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_cmd
+	chmod 0220 /sys/kernel/debug/omap_mux/sdmmc1_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi2_somi
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi2_simo
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi2_cs1
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi2_cs0
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi2_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_somi
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_simo
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_cs3
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_cs2
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_cs1
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_cs0
+	chmod 0220 /sys/kernel/debug/omap_mux/mcspi1_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp_clks
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp4_fsx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp4_dx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp4_dr
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp4_clkx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp3_fsx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp3_dx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp3_dr
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp3_clkx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp2_fsx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp2_dx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp2_dr
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp2_clkx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_fsx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_fsr
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_dx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_dr
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_clkx
+	chmod 0220 /sys/kernel/debug/omap_mux/mcbsp1_clkr
+	chmod 0220 /sys/kernel/debug/omap_mux/jtag_emu1
+	chmod 0220 /sys/kernel/debug/omap_mux/jtag_emu0
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c4_sda
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c4_scl
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c3_sda
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c3_scl
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c2_sda
+	chmod 0220 /sys/kernel/debug/omap_mux/i2c2_scl
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_stp
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_nxt
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_dir
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data7
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data6
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data5
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data4
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data3
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data2
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data1
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_data0
+	chmod 0220 /sys/kernel/debug/omap_mux/hsusb0_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/hdq_sio
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_wait3
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_wait2
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_wait1
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_nwp
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs7
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs6
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs5
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs4
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs3
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs2
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_ncs1
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_nbe1
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_nbe0_cle
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d9
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d8
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d15
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d14
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d13
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d12
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d11
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_d10
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a9
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a8
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a7
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a6
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a5
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a4
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a3
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a2
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a10
+	chmod 0220 /sys/kernel/debug/omap_mux/gpmc_a1
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d9
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d8
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d7
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d6
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d5
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d4
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d3
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d2
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d15
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d14
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d13
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d12
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d11
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d10
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d1
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_d0
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_ctl
+	chmod 0220 /sys/kernel/debug/omap_mux/etk_clk
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_vsync
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_pclk
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_hsync
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data9
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data8
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data7
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data6
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data5
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data4
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data3
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data2
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data23
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data22
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data21
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data20
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data19
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data18
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data17
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data16
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data15
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data14
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data13
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data12
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data11
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data10
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data1
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_data0
+	chmod 0220 /sys/kernel/debug/omap_mux/dss_acbias
+	chmod 0220 /sys/kernel/debug/omap_mux/csi2_dy1
+	chmod 0220 /sys/kernel/debug/omap_mux/csi2_dy0
+	chmod 0220 /sys/kernel/debug/omap_mux/csi2_dx1
+	chmod 0220 /sys/kernel/debug/omap_mux/csi2_dx0
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_xclkb
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_xclka
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_wen
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_vs
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_strobe
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_pclk
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_hs
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_fld
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d9
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d8
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d7
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d6
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d5
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d4
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d3
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d2
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d11
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d10
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d1
+	chmod 0220 /sys/kernel/debug/omap_mux/cam_d0
+#20110805 yongman.kwon@lge.com [LS855] change debug sys file permission for CTS [END]
+
+#yongman.kwon
+# create basic filesystem structure
+    mkdir /data/misc 01771 system misc
+    mkdir /data/misc/bluetoothd 0770 bluetooth bluetooth
+    mkdir /data/misc/bluetooth 0770 system system
+    mkdir /data/misc/keystore 0700 keystore keystore
+    mkdir /data/misc/systemkeys 0700 system system
+    mkdir /data/misc/vpn 0770 system system
+    mkdir /data/misc/vpn/profiles 0770 system system
+    # give system access to wpa_supplicant.conf for backup and restore
+#    mkdir /data/misc/wifi 0777 wifi wifi
+    mkdir /data/misc/wifi 0775 wifi wifi
+    mkdir /data/misc/wifi/sockets 0771 wifi wifi
+#    mkdir /data/misc/dhcp 0777 wifi wifi
+    mkdir /data/misc/dhcp 0775 dhcp dhcp
+    mkdir /data/local 0771 shell shell
+    mkdir /data/local/tmp 0771 shell shell
+    mkdir /data/data 0771 system system
+    mkdir /data/app-private 0771 system system
+    mkdir /data/app 0771 system system
+    mkdir /data/property 0700 root root
+	
+    # create Blue TaskManager - intelligent_killer.db 
+    mkdir /data/disk 0775 system system
+
+    # create dalvik-cache and double-check the perms
+    mkdir /data/dalvik-cache 0771 system system
+    chown system system /data/dalvik-cache
+    chmod 0771 /data/dalvik-cache
+
+    # create the lost+found directories, so as to enforce our permissions
+    mkdir /data/lost+found 0770
+    mkdir /cache/lost+found 0770
+
+    # double check the perms, in case lost+found already exists, and set owner
+    chown root root /data/lost+found
+    chmod 0770 /data/lost+found
+    chown root root /cache/lost+found
+    chmod 0770 /cache/lost+found
+    chown root root /lost+found
+    chmod 0770 /lost+found
+
+# LGE_CHANGE_S, sangmin.baek@lge.com, 2011-03-21, for fota
+	mkdir /data/fota 0775 radio system
+	chown radio system /data/fota 
+	chmod 0775 /data/fota
+# LGE_CHANGE_E, sangmin.baek@lge.com, 2011-03-21, for fota
+#if defined(ANDY_LGDRM)
+## ANDY_PORTING LGDRM [lg-drm@lge.com 100401]
+    # We chown/chmod /lgdrm again so because mount is run as root + defaults
+    mkdir /lgdrm 0770 lgdrm lgdrm_acc
+
+    mount ext4 /dev/block/mmcblk0p8 /lgdrm noatime nosuid nodev barrier=0 data=writeback nobh nodiratime noauto_da_alloc
+    chown lgdrm lgdrm_acc /lgdrm
+    chmod 0770 /lgdrm
+
+    # create dirs if not exist
+    mkdir /data/lgdrm 0770 lgdrm lgdrm_acc
+    mkdir /data/wmdrm 0770 lgdrm lgdrm_acc
+## ANDY_END
+#endif
+
+#if defined(ANDY_ERS)
+## ERS
+    mkdir /data/data/com.lge.ers
+    mkdir /data/data/com.lge.ers/android
+    mkdir /data/data/com.lge.ers/kernel
+    mkdir /data/data/com.lge.ers/arm9
+    chmod 0775 /data/data/com.lge.ers/android
+    chmod 0775 /data/data/com.lge.ers/kernel
+    chmod 0775 /data/data/com.lge.ers/arm9
+#endif
+
+on boot
+# basic network init
+    ifup lo
+    hostname localhost
+    domainname localdomain
+
+# set RLIMIT_NICE to allow priorities from 19 to -20
+    setrlimit 13 40 40
+
+# Define the oom_adj values for the classes of processes that can be
+# killed by the kernel.  These are used in ActivityManagerService.
+    setprop ro.FOREGROUND_APP_ADJ 0
+    setprop ro.VISIBLE_APP_ADJ 1
+    setprop ro.PERCEPTIBLE_APP_ADJ 2
+    setprop ro.HEAVY_WEIGHT_APP_ADJ 3
+    setprop ro.SECONDARY_SERVER_ADJ 4
+    setprop ro.BACKUP_APP_ADJ 5
+    setprop ro.HOME_APP_ADJ 6
+    setprop ro.HIDDEN_APP_MIN_ADJ 7
+    setprop ro.CONTENT_PROVIDER_ADJ 14
+    setprop ro.EMPTY_APP_ADJ 15
+
+# Define the memory thresholds at which the above process classes will
+# be killed.  These numbers are in pages (4k).
+    setprop ro.FOREGROUND_APP_MEM 2048
+    setprop ro.VISIBLE_APP_MEM 3072
+    setprop ro.PERCEPTIBLE_APP_MEM 4096
+    setprop ro.HEAVY_WEIGHT_APP_MEM 4096
+    setprop ro.SECONDARY_SERVER_MEM 6144
+    setprop ro.BACKUP_APP_MEM 6144
+    setprop ro.HOME_APP_MEM 6144
+    setprop ro.HIDDEN_APP_MEM 7168
+    setprop ro.EMPTY_APP_MEM 8192
+
+# Write value must be consistent with the above properties.
+# Note that the driver only supports 6 slots, so we have HOME_APP at the
+# same memory level as services.
+    write /sys/module/lowmemorykiller/parameters/adj 0,1,2,4,7,15
+
+    write /proc/sys/vm/overcommit_memory 1
+    write /proc/sys/vm/min_free_order_shift 4
+    write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,7168,8192
+
+    # Set init its forked children's oom_adj.
+    write /proc/1/oom_adj -16
+
+# Tweak background writeout
+    write /proc/sys/vm/dirty_expire_centisecs 200
+    write /proc/sys/vm/dirty_background_ratio  5
+
+    # Permissions for System Server and daemons.
+    chown radio system /sys/android_power/state
+    chown radio system /sys/android_power/request_state
+    chown radio system /sys/android_power/acquire_full_wake_lock
+    chown radio system /sys/android_power/acquire_partial_wake_lock
+    chown radio system /sys/android_power/release_wake_lock
+    chown radio system /sys/power/state
+    chown radio system /sys/power/wake_lock
+    chown radio system /sys/power/wake_unlock
+    chmod 0660 /sys/power/state
+    chmod 0660 /sys/power/wake_lock
+    chmod 0660 /sys/power/wake_unlock
+    chown system system /sys/class/timed_output/vibrator/enable
+    chown system system /sys/class/leds/keyboard-backlight/brightness
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/button-backlight/brightness
+    chown system system /sys/class/leds/jogball-backlight/brightness
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/red/device/grpfreq
+    chown system system /sys/class/leds/red/device/grppwm
+    chown system system /sys/class/leds/red/device/blink
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/red/device/grpfreq
+    chown system system /sys/class/leds/red/device/grppwm
+    chown system system /sys/class/leds/red/device/blink
+    chown system system /sys/class/timed_output/vibrator/enable
+    chown system system /sys/module/sco/parameters/disable_esco
+    chown system system /sys/kernel/ipv4/tcp_wmem_min
+    chown system system /sys/kernel/ipv4/tcp_wmem_def
+    chown system system /sys/kernel/ipv4/tcp_wmem_max
+    chown system system /sys/kernel/ipv4/tcp_rmem_min
+    chown system system /sys/kernel/ipv4/tcp_rmem_def
+    chown system system /sys/kernel/ipv4/tcp_rmem_max
+    chown root radio /proc/cmdline
+
+	chown radio system /sys/class/lg_fw_diagclass/lg_fw_diagcmd/bt_dun_by_cp
+	chmod 0660 /sys/class/lg_fw_diagclass/lg_fw_diagcmd/bt_dun_by_cp
+
+	chown radio system /sys/devices/platform/modem_ctrl/ril_fail
+	chmod 0660 /sys/devices/platform/modem_ctrl/ril_fail
+
+# LG_RIL_RECOVERY_MODE_D2
+	chown radio system /sys/devices/platform/modem_ctrl/cp_ril_init
+	chmod 0660 /sys/devices/platform/modem_ctrl/cp_ril_init
+
+# cpufreq permissions
+    chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+
+# torch
+    chmod 0777 /sys/class/leds/rt8515/brightness
+
+# Define TCP buffer sizes for various networks
+#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.hspa    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.hsdpa   4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+
+
+    class_start default
+
+# set properties for pppd demon   
+    chmod 0777 /etc/init.gprs-pppd
+    chown root radio /etc/init.gprs-pppd
+    chmod 0777 /etc/ppp/ip-down
+    chown root radio /etc/ppp/ip-down
+    chmod 0777 /etc/ppp/ip-up
+    chown root radio /etc/ppp/ip-up
+
+    chmod 0777 /etc/init.vsnet
+    chown root radio /etc/init.vsnet
+
+	chmod 664 /sys/devices/omapdss/display0
+	chmod 0664 /sys/devices/platform/omapdss/display0/name
+	chmod 0664 /sys/devices/platform/omapdss/display1/name
+	chmod 0664 /sys/devices/platform/omapdss/display0/enabled
+	chmod 0664 /sys/devices/platform/omapdss/display1/enabled
+	chmod 0664 /sys/devices/platform/omapdss/display0/timings
+	chmod 0664 /sys/devices/platform/omapdss/display1/timings
+	chmod 0644 /sys/devices/platform/omapdss/overlay0/manager
+	chmod 0644 /sys/devices/platform/omapdss/overlay1/manager
+	chmod 0644 /sys/devices/platform/omapdss/overlay2/manager
+	chmod 0644 /sys/devices/platform/omapdss/overlay0/zorder
+	chmod 0644 /sys/devices/platform/omapdss/overlay1/zorder
+	chmod 0644 /sys/devices/platform/omapdss/overlay2/zorder
+	chmod 0644 /sys/devices/platform/omapdss/overlay0/enabled
+	chmod 0644 /sys/devices/platform/omapdss/overlay1/enabled
+	chmod 0644 /sys/devices/platform/omapdss/overlay2/enabled
+	chmod 0644 /sys/devices/platform/omapdss/manager0/display
+	chmod 0644 /sys/devices/platform/omapdss/manager1/display
+	chmod 0644 /sys/devices/platform/omapdss/manager0/trans_key_enabled
+	chmod 0644 /sys/devices/platform/omapdss/manager1/trans_key_enabled
+	chmod 0644 /sys/devices/platform/omapdss/manager0/trans_key_type
+	chmod 0644 /sys/devices/platform/omapdss/manager1/trans_key_type
+	chmod 0644 /sys/devices/platform/omapdss/manager0/trans_key_value
+	chmod 0644 /sys/devices/platform/omapdss/manager1/trans_key_value
+	chmod 0644 /sys/devices/platform/omapdss/manager0/alpha_blending_enabled
+	chmod 0644 /sys/devices/platform/omapdss/manager1/alpha_blending_enabled
+	chmod 0664 /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als_option
+	chown system system /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als_option
+	chmod 0664 /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/onoff
+	chown system radio /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/onoff
+	chmod 0664 /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/alsgain_control
+	chown system system  /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/alsgain_control
+	chmod 0664 /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als_control
+	chown system system /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als_control
+	chmod 0664 /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als
+	chown system system /sys/devices/platform/i2c_omap.2/i2c-2/2-0060/leds/lcd-backlight/als
+	chown system system /sys/class/leds/lcd-backlight/ignore_bl
+	write /sys/devices/platform/omapdss/manager0/alpha_blending_enabled 1
+
+# MMS: Create log directory for fw3a_core
+    mkdir /data/log/fw3A 0775 root root
+
+# change permissions for alsa nodes
+    symlink /dev/snd/pcmC0D0c /dev/pcmC0D0c
+    symlink /dev/snd/pcmC0D0p /dev/pcmC0D0p
+    symlink /dev/snd/controlC0 /dev/controlC0
+    symlink /dev/snd/timer /dev/timer
+    chmod 0777 /dev/pcmC0D0c
+    chmod 0777 /dev/pcmC0D0p
+    chmod 0777 /dev/controlC0
+    chmod 0777 /dev/timer
+
+# change permissions for modem
+    chmod 0660 /dev/ttyspi0
+    chown radio radio /dev/ttyspi0
+
+    chmod 0660 /dev/ttyspi1
+    chown radio radio /dev/ttyspi1
+
+# LGE_KERNEL_MUX
+    chmod 0660 /dev/pts1
+    chown radio radio /dev/pts1
+    chmod 0660 /dev/pts2
+    chown radio radio /dev/pts2
+    chmod 0660 /dev/pts3
+    chown radio radio /dev/pts3
+    chmod 0660 /dev/pts4
+    chown radio radio /dev/pts4
+    chmod 0660 /dev/pts5
+    chown radio radio /dev/pts5
+    chmod 0660 /dev/pts6
+    chown radio radio /dev/pts6
+    chmod 0660 /dev/pts7
+    chown radio radio /dev/pts7
+    chmod 0660 /dev/pts8
+    chown radio radio /dev/pts8
+    chmod 0660 /dev/pts9
+    chown radio radio /dev/pts9
+    chmod 0660 /dev/pts10
+    chown radio radio /dev/pts10
+    chmod 0660 /dev/pts11
+    chown radio radio /dev/pts11
+    chmod 0660 /dev/pts12
+    chown radio radio /dev/pts12
+    chmod 0660 /dev/pts13
+    chown radio radio /dev/pts13
+    chmod 0660 /dev/pts14
+    chown radio radio /dev/pts14
+    chmod 0660 /dev/pts16
+    chown radio radio /dev/pts16
+    chmod 0660 /dev/pts17
+    chown radio radio /dev/pts17
+    chmod 0660 /dev/pts18
+    chown radio radio /dev/pts18
+    chmod 0660 /dev/pts19
+    chown radio radio /dev/pts19
+    chmod 0660 /dev/pts20
+    chown radio radio /dev/pts20
+    chmod 0660 /dev/pts21
+    chown radio radio /dev/pts21
+    chmod 0660 /dev/pts22
+    chown radio radio /dev/pts22
+    chmod 0660 /dev/pts23
+    chown radio radio /dev/pts23
+    chmod 0660 /dev/pts24
+    chown radio radio /dev/pts24
+    chmod 0660 /dev/pts25
+    chown radio radio /dev/pts25
+    chmod 0660 /dev/pts26
+    chown radio radio /dev/pts26
+    chmod 0660 /dev/pts27
+    chown radio radio /dev/pts27
+    chmod 0660 /dev/pts28
+    chown radio radio /dev/pts28
+    chmod 0660 /dev/pts29
+    chown radio radio /dev/pts29
+    chmod 0660 /dev/pts30
+    chown radio radio /dev/pts30
+    chmod 0660 /dev/pts31
+    chown radio radio /dev/pts31
+
+# LGE_UPDATE_S 20110126 jaejoong.kim@lge.com for usb serial
+    chmod 0777 /dev/ttyGS0
+    chmod 0777 /dev/ttyGS1
+    chmod 0777 /dev/ttyGS2
+# LGE_UPDATE_E
+
+# change permissions for modem
+    chmod 0660 /dev/ttyS0
+    chown radio radio /dev/ttyS0
+
+# change permissions for bridge.  Symlink search directory
+    chmod 0777 /dev/DspBridge
+
+# change permissions for Camera
+    chmod 0777 /dev/video0
+    chmod 0777 /dev/video5
+    chmod 0777 /dev/video6
+    chmod 0777 /dev/video10
+
+# change permissions for Overlay
+    chmod 0777 /dev/video1
+    chmod 0777 /dev/video2
+    
+# change permissions for Previewer and Resizer
+    chmod 0777 /dev/omap-previewer
+    chmod 0777 /dev/omap-resizer
+    chmod 0777 /dev/omap-prev2resz
+
+	chmod 0666 /dev/hdmitx
+	chmod 0666 /dev/hdmicec
+
+# Bluetooth
+    chmod 0660 /dev/ttyO1
+    chown bluetooth bluetooth /dev/ttyO1
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chmod 0660 /sys/class/rfkill/rfkill1/state
+    chmod 0660 /sys/class/rfkill/rfkill1/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill1/state
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill1/type
+    write /sys/class/rfkill/rfkill0/state 0
+# LGE_LAB3_CHANGE_S BT:dun_permission
+#for bluetooth turn on safely
+    setprop service.brcm.bt.btld 0
+    setprop service.brcm.bt.activation 0
+    setprop service.brcm.bt.srv_active 0
+    setprop service.brcm.bt.hcid_active 0
+# for Bluetooth DUN    
+    chmod 0660 /dev/pts15
+    chown bluetooth bluetooth /dev/pts15
+# LGE_LAB3_CHANGE_E BT:dun_permission
+
+# Sensor
+    chown system system /dev/akm8973_daemon
+	chown system system /dev/kxtf9_accel
+    chown system system /dev/akm8973_aot
+# LGE_CHANGE_S, ryu.seeyeol@lge.com, 2011-02-01, Sensors Porting (MPL V3.3 Release)
+    chmod 0777 /dev/mpu
+    chmod 0777 /dev/mpuirq
+    chmod 0777 /dev/accelirq
+    chmod 0777 /dev/timerirq
+# LGE_CHANGE_E, ryu.seeyeol@lge.com, 2011-02-01, Sensors Porting (MPL V3.3 Release)
+    chown system system /sys/bus/i2c/drivers/hub_proxi/3-0044/onoff
+    chown system system /sys/bus/i2c/drivers/hub_proxi/3-0044/delay
+    chown system system /sys/devices/platform/i2c-gpio.7/i2c-adapter/i2c-7/7-001c/checkresult
+    chown system system /sys/devices/platform/i2c-gpio.7/i2c-adapter/i2c-7/7-001c/checkopmode
+    chmod 0666 /sys/devices/platform/i2c-gpio.7/i2c-adapter/i2c-7/7-001c/checkresult
+    chmod 0666 /sys/devices/platform/i2c-gpio.7/i2c-adapter/i2c-7/7-001c/checkopmode
+
+# GPS Porting
+    mkdir /data/gps
+    chmod 771 /data/gps
+    mkdir /data/cache
+    chmod 771 /data/cache
+    mkdir /data/gps/var
+    chmod 771 /data/gps/var
+    mkdir /data/gps/var/run
+    chmod 771 /data/gps/var/run
+    mkdir /data/gps/log
+    chmod 771 /data/gps/log
+
+#yongman.kwon : for switching USB pid [start]
+#LGE_SYS_USB_PID 
+    chown system system /sys/devices/platform/android_usb/product_id  
+    chmod 0664 /sys/devices/platform/android_usb/product_id
+
+    chown system system /sys/module/android/parameters/force_reset  
+    chmod 0775 /sys/module/android/parameters/force_reset 
+#yongman.kwon : for switching USB pid [end]
+
+
+# vibrator
+	chown shell system /dev/tspdrv
+	chmod 0660 /dev/tspdrv
+
+#create LGMTP dirs if not exist
+    mkdir /data/lgmtp 0775
+
+# Batt gauge error detection
+    chmod 0664 /sys/bus/platform/drivers/twl4030_bci/twl4030_bci/gauge_if
+
+# Enabling sleep in idle path
+    write /sys/power/sleep_while_idle 1
+
+# Enabling Off mode
+    write /sys/power/enable_off_mode 1
+
+# Enabling voltage off while idle
+    write /sys/power/voltage_off_while_idle 1
+
+# Permissions for setting the DSP Frequency
+    chown media root /sys/power/dsp_freq
+
+# To disable g_ether gadget
+setprop service.adb.tcp.port NULL
+
+    chown system system /sys/devices/platform/soc-audio/codec_reg
+    chown system system /sys/bus/i2c/drivers/wm9093/2-006e/wm9093_data
+
+#LGE_SMS_UTS	yaga.lee@lge.com [2011-03-21] UTS_check_mickey
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/sms_status
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/get_sms
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/set_sms
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_sms_status
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_get_sms
+	chown root system /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_set_sms
+	chown system camera /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/audio_autotest
+
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/sms_status
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/get_sms
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/set_sms
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_sms_status
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_get_sms
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/rsp_set_sms
+	chmod 0775 /sys/devices/virtual/lg_fw_diagclass/lg_fw_diagcmd/audio_autotest
+
+#LGE_SMS_UTS	yaga.lee@lge.com [2011-03-21] UTS_check_mickey
+
+
+#20110506 yongman.kwon@lge.com [LS855] add for testmode [START]
+	chown system system /sys/class/lg_fw_diagclass/lg_fw_diagcmd/accel_pitch
+	chown system system /sys/class/lg_fw_diagclass/lg_fw_diagcmd/accel_roll
+
+	chmod 0664 /sys/class/lg_fw_diagclass/lg_fw_diagcmd/accel_pitch
+	chmod 0664 /sys/class/lg_fw_diagclass/lg_fw_diagcmd/accel_roll
+
+	chown system system /sys/class/lg_fw_diagclass/lg_fw_diagcmd/result
+	chown system system /sys/class/lg_fw_diagclass/lg_fw_diagcmd/return
+
+	chmod 0664 /sys/class/lg_fw_diagclass/lg_fw_diagcmd/result
+	chmod 0664 /sys/class/lg_fw_diagclass/lg_fw_diagcmd/return	
+#20110506 yongman.kwon@lge.com [LS855] add for testmode [END]
+
+# 20110717 dongyu.gwak@lge.com reserve isp for camera
+chown media media /sys/devices/platform/omap3isp/isp_reserve
+# 20110717 dongyu.gwak@lge.com
+
+# [2011.05.29] hj.eum@lge.com - for killing process forcingly 
+chmod 4755 /system/bin/killutil
+
+## Daemon processes to be run by init.
+##
+service ueventd /sbin/ueventd
+    critical
+
+service console /system/bin/sh
+    console
+    user shell
+    group log
+
+# SGX driver
+    chmod 0666 /dev/pvrsrvkm
+
+# SGX driver service
+#service pvrsrv /system/bin/sh /system/bin/sgx/rc.pvr start
+#	user root
+#	oneshot
+
+# Initialize the SGX driver
+service pvrsrvinit /system/bin/pvrsrvinit
+        user root
+        oneshot
+
+# load DSP firmware
+service baseimage /system/bin/cexec.out /system/lib/dsp/baseimage.dof
+    user root
+    group audio
+    oneshot
+
+# adbd is controlled by the persist.service.adb.enable system property
+service adbd /sbin/adbd
+    disabled
+
+# adbd on at boot in emulator
+on property:ro.kernel.qemu=1
+    start adbd
+
+on property:persist.service.adb.enable=1
+    start adbd
+
+on property:persist.service.adb.enable=0
+    stop adbd
+
+
+
+service servicemanager /system/bin/servicemanager
+    user system
+    critical
+    onrestart restart zygote
+    onrestart restart media
+
+# init.d support
+service sysinit /system/bin/logwrapper /system/xbin/busybox run-parts /system/etc/init.d
+    enable
+    oneshot
+
+service vold /system/bin/vold
+    socket vold stream 0660 root mount
+
+service netd /system/bin/netd
+    socket netd stream 0660 root system
+
+service debuggerd /system/bin/debuggerd
+
+service installd /system/bin/installd
+    socket installd stream 600 system system
+
+
+service wlan_loader /system/bin/wlan_loader \
+    -f /system/etc/wifi/firmware.bin -i /system/etc/wifi/tiwlan.ini -e /system/etc/wifi/nvs_map.bin
+     disabled
+     oneshot
+
+service wpa_supplicant /system/bin/wpa_supplicant -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf -dd
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service ifcfg_ti /system/bin/ifconfig wlan0 up
+    disabled
+    oneshot
+
+service dhcpcd /system/bin/dhcpcd -ABK -d wlan0  # LGE_AUTO_IP - enable IPv4LL & ARP (DLNA, 2010.10.19)
+    disabled 
+    oneshot
+
+service wlan_ap_loader /system/bin/tiap_loader \
+	-i /system/etc/wifi/softap/tiwlan_ap.ini -f /system/etc/wifi/softap/firmware_ap.bin
+    disabled
+    oneshot
+
+service hostapd_run /system/bin/hostapd /tmp/hostapd_create.conf
+    disabled
+    oneshot
+
+service dhcpserver_run /system/bin/udhcpd /system/etc/wifi/softap/udhcpdWlan.conf
+    disabled
+    oneshot
+
+service tiwlan_if_down /system/bin/ifconfig wlan0 down
+    disabled
+    oneshot
+
+service ifcfg_tiap0 /system/bin/ifconfig tiap0 192.168.43.1 netmask 255.255.255.0
+    disabled
+    oneshot
+
+service ril-daemon /system/bin/rild -l /system/lib/lge-ril.so -- -d /dev/ttyspi0
+    socket rild stream 660 root radio
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio sdcard_rw
+
+# LGE_LAB3_CHANGE_S FOR_CDMA US850  sungjoong.kang@lge.com
+service pppd_gprs /etc/init.gprs-pppd
+   user root
+   group radio cache inet misc
+   disabled
+   oneshot
+
+service pppd_gprs1 /etc/init.gprs-pppd 1
+   user root
+   group radio cache inet misc
+   disabled
+   oneshot
+# LGE_LAB3_CHANGE_E gb_ril_p1
+
+#if defined(ANDY_LGDRM)
+## ANDY_PORTING LGDRM [lg-drm@lge.com 100401]
+# Must executed before system_server
+service lgdrm /system/bin/lgdrmserver
+    user lgdrm
+    group lgdrm_acc system sdcard_rw
+## ANDY_END
+#endif
+
+service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
+    socket zygote stream 666
+#    onrestart write /sys/android_power/request_state wake
+    onrestart write /sys/power/state on
+    onrestart restart media
+
+service media /system/bin/mediaserver
+    user media
+	group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+	ioprio rt 4
+
+# Samsung for driver
+# MMS: set fw3a_core to run all the time
+#
+# You can see fw3a_core options by executing this command from the PC:
+#   adb shell "/system/bin/fw3a_core --dbgstd=out --help"
+# 
+# Here are the commands, which should be executed from the PC if you 
+# wanto to: 
+#
+#   * stop all output:
+#     adb shell "echo --dbgstd=none   | nc -w 1 -u localhost 6660"
+#
+#   * redirect dbg info to ADB logcat system:
+#     adb shell "echo --dbgstd=logcat | nc -w 1 -u localhost 6660"
+#
+#   * redirect dbg info to a file:
+#     adb shell "echo --dbgstd=/data/log/fw3A/fw3a_core.dbg.log | nc -w 1 -u localhost 6660"
+#
+service fw3a /system/bin/fw3a_core --dbgport=6660 --dbgremote --dbgpath=/data/log/fw3A
+    user camera
+    group camera
+
+# LGE_CHANGE_S, bae.cheolhwan@lge.com, 2011-05-10. Modify a hidden reset fuction.
+service hresetfinished /system/bin/sh /system/bin/hiddenresetcompleted.sh
+    user root
+    disabled
+    oneshot
+# LGE_CHANGE_E, bae.cheolhwan@lge.com, 2011-05-10. Modify a hidden reset fuction.
+
+service bootanim /system/bin/bootanimation
+    user graphics
+    group graphics
+    disabled
+    oneshot
+
+service dbus /system/bin/dbus-daemon --system --nofork
+    socket dbus stream 666 bluetooth bluetooth
+    user bluetooth
+    group bluetooth net_bt_admin
+
+# Make sure we startup btld before bluetoothd
+# Set target address to emulator host loopback IF
+# Limit baudrate to 460800 to ensure reliable uart operation
+# LGE_LAB3_CHANGE_S BT:BTL-A-1
+service btld /system/bin/logwrapper /system/bin/btld -pf /system/bin/BCM43291A0_003.001.013.0141.0160.hcd -hb 3000000 -hp /dev/ttyO1 -lpm 1
+    user root			
+    group bluetooth net_bt_admin			
+    disabled			
+    oneshot			
+# LGE_LAB3_CHANGE_E BT:BTL-A-1
+
+service bluetoothd /system/bin/bluetoothd -n			
+    socket bluetooth stream 660 bluetooth bluetooth			
+    socket dbus_bluetooth stream 660 bluetooth bluetooth			
+# init.rc does not yet support applying capabilities, so run as root and			
+# let bluetoothd drop uid to bluetooth with the right linux capabilities			
+    group bluetooth net_bt_admin misc			
+    disabled			
+
+service racoon /system/bin/racoon
+    socket racoon stream 600 system system
+    # racoon will setuid to vpn after getting necessary resources.
+    group net_admin
+    disabled
+    oneshot
+
+service mtpd /system/bin/mtpd
+    socket mtpd stream 600 system system
+    user vpn
+    group vpn net_admin net_raw
+    disabled
+    oneshot
+
+service keystore /system/bin/keystore /data/misc/keystore
+    user keystore
+    group keystore
+    socket keystore stream 666
+
+service dumpstate /system/bin/dumpstate -s
+    socket dumpstate stream 0660 shell log
+    disabled
+    oneshot
+    
+#LGE_CHANGE_S [hyunkyung.shin@lge.com] 2011-02-05
+#   Daemon for LGE DIAG
+service lge_diag /system/bin/lge_diag
+    user root
+    group root
+#LGE_CHANGE_E [hyunkyung.shin@lge.com] 2011-02-05
+
+#LGE_CHANGE_S [hyunkyung.shin@lge.com] 2011-02-05
+#   Daemon for LGE MODEM
+service lge_modem /system/bin/lge_modem
+    user root
+    group input
+#LGE_CHANGE_E [hyunkyung.shin@lge.com] 2011-02-05
+
+service glgps /system/bin/glgps -c /system/etc/gps_brcm_conf.xml
+    user root
+    group system
+    oneshot
+
+service immvibed /system/bin/immvibed
+	user shell
+	group system
+	oneshot
+
+# LGE_UPDATE_S 20110126 jaejoong.kim for block usb personality for No EMSYS USB
+on device-added-/devices/virtual/misc/android_adb
+    stop adbd
+    start adbd
+# LGE_UPDATE_E 20110126 jaejoong.kim for block usb personality for No EMSYS USB
+
+# LGE_UPDATE_S 20110126 jaejoong.kim for block usb personality for No EMSYS USB
+on device-removed-/devices/virtual/misc/android_adb
+    stop adbd
+    start adbd
+# LGE_UPDATE_E 20110126 jaejoong.kim for block usb personality for No EMSYS USB
+
+# bugreport is triggered by the KEY_VOLUME_DOWN and KEY_VOLUME_UP keycodes
+service bugreport /system/bin/logwrapper /system/bin/dumpstate -d -v -o /sdcard/bugreports/bugreport
+	disabled
+	oneshot
+	keycodes 114 115
+	
+## Mobile Hot-spot by kyungsu.mok
+service dhcpd /system/xbin/udhcpd -f
+	disabled
+	oneshot
+# wo0gi[byoungwook.baek@lge.com] for Wi-Fi Direct Station [START]
+service wp2p_dhcpcd /system/bin/dhcpcd -B p2p0.1  
+	disabled
+	oneshot
+# wo0gi[byoungwook.baek@lge.com] for Wi-Fi Direct Station [END]
+
+on property:dev.bootcomplete=1
+    write /sys/devices/platform/i2c_omap.2/i2c-2/2-001a/blink_enable 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
+    write /sys/devices/system/cpu/cpu0/cpufreq/ondemand/up_threshold 85
+    write /sys/devices/system/cpu/cpu0/cpufreq/ondemand/down_differential 30
+    write /sys/devices/system/cpu/cpu0/cpufreq/ondemand/sampling_rate 50000
